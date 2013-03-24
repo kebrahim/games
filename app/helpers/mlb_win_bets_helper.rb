@@ -1,0 +1,2 @@
+module MlbWinBetsHelper
+end

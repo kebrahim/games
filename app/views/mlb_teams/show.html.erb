@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>City:</b>
+  <%= @mlb_team.city %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @mlb_team.name %>
+</p>
+
+<p>
+  <b>Abbreviation:</b>
+  <%= @mlb_team.abbreviation %>
+</p>
+
+<p>
+  <b>Division:</b>
+  <%= @mlb_team.division %>
+</p>
+
+<p>
+  <b>League:</b>
+  <%= @mlb_team.league %>
+</p>
+
+
+<%= link_to 'Edit', edit_mlb_team_path(@mlb_team) %> |
+<%= link_to 'Back', mlb_teams_path %>

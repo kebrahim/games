@@ -1,4 +1,12 @@
 Games::Application.routes.draw do
+  resources :mlb_win_bets
+
+  resources :mlb_wins
+
+  resources :mlb_teams
+
+  resources :users
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

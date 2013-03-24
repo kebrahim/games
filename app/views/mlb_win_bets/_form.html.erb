@@ -1,0 +1,25 @@
+<%= form_for(@mlb_win_bet) do |f| %>
+  <% if @mlb_win_bet.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@mlb_win_bet.errors.count, "error") %> prohibited this mlb_win_bet from being saved:</h2>
+
+      <ul>
+      <% @mlb_win_bet.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :prediction %><br />
+    <%= f.text_field :prediction %>
+  </div>
+  <div class="field">
+    <%= f.label :amount %><br />
+    <%= f.text_field :amount %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

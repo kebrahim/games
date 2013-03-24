@@ -1,0 +1,31 @@
+<h1>Listing mlb_win_bets</h1>
+
+<table class='table table-striped table-bordered table-condensed'>
+  <tr>
+  	<th>User</th>
+  	<th>MLB Team</th>
+  	<th>Line</th>
+    <th>Prediction</th>
+    <th>Amount</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @mlb_win_bets.each do |mlb_win_bet| %>
+  <tr>
+    <td><%= mlb_win_bet.user.first_name + " " + mlb_win_bet.user.last_name %></td>
+    <td><%= mlb_win_bet.mlb_win.mlb_team.abbreviation %></td>
+    <td><%= mlb_win_bet.mlb_win.line %></td>
+    <td><%= mlb_win_bet.prediction %></td>
+    <td><%= mlb_win_bet.amount %></td>
+    <td><%= link_to 'Show', mlb_win_bet %></td>
+    <td><%= link_to 'Edit', edit_mlb_win_bet_path(mlb_win_bet) %></td>
+    <td><%= link_to 'Destroy', mlb_win_bet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Mlb win bet', new_mlb_win_bet_path %>

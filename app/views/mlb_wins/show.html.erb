@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Year:</b>
+  <%= @mlb_win.year %>
+</p>
+
+<p>
+  <b>Over/under</b>
+  <%= @mlb_win.line %>
+</p>
+
+<p>
+  <b>Actual:</b>
+  <%= @mlb_win.actual %>
+</p>
+
+
+<%= link_to 'Edit', edit_mlb_win_path(@mlb_win) %> |
+<%= link_to 'Back', mlb_wins_path %>

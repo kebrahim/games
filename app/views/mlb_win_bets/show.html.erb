@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Prediction:</b>
+  <%= @mlb_win_bet.prediction %>
+</p>
+
+<p>
+  <b>Amount:</b>
+  <%= @mlb_win_bet.amount %>
+</p>
+
+
+<%= link_to 'Edit', edit_mlb_win_bet_path(@mlb_win_bet) %> |
+<%= link_to 'Back', mlb_win_bets_path %>
