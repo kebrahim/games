@@ -2,7 +2,9 @@ class MlbWinBetsController < ApplicationController
   # GET /mlb_win_bets
   # GET /mlb_win_bets.json
   def index
-    @mlb_win_bets = MlbWinBet.all
+    # TODO filter by logged-in user
+    @logged_in_user = User.first
+    @mlb_win_bets = MlbWinBet.where(user_id: @logged_in_user)
 
     respond_to do |format|
       format.html # index.html.erb
