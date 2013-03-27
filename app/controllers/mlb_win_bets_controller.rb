@@ -2,16 +2,36 @@ class MlbWinBetsController < ApplicationController
   # GET /mlb_win_bets
   # GET /mlb_win_bets.json
   def index
-    # TODO filter by logged-in user
-    @logged_in_user = User.first
+    # TODO determine logged-in user
+    @logged_in_user = User.last
     @mlb_win_bets = MlbWinBet.where(user_id: @logged_in_user)
-
+    
+    # TODO calculate current year
+    # pull all mlb over/unders which have not been assigned by the logged-in user for the current
+    # year, separated by division
+    @nl_east = division_query(@logged_in_user.id, 2013, "NL", "East")
+    @nl_central = division_query(@logged_in_user.id, 2013, "NL", "Central")
+    @nl_west = division_query(@logged_in_user.id, 2013, "NL", "West")
+    @al_east = division_query(@logged_in_user.id, 2013, "AL", "East")
+    @al_central = division_query(@logged_in_user.id, 2013, "AL", "Central")
+    @al_west = division_query(@logged_in_user.id, 2013, "AL", "West")
+    
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @mlb_win_bets }
     end
   end
 
+  #
+  def division_query(user_id, year, league, division)
+    return MlbWin.joins("LEFT OUTER JOIN mlb_win_bets ON mlb_wins.id = mlb_win_bets.mlb_win_id")
+        .joins("LEFT OUTER JOIN users ON mlb_win_bets.user_id = users.id")
+        .where("(mlb_win_bets.user_id is null or mlb_win_bets.user_id <> " + 
+            user_id.to_s + ") and mlb_wins.year = " + year.to_s)
+        .joins(:mlb_team).where("mlb_teams.league = '" + league + "' and mlb_teams.division = '" +
+            division + "'")
+  end
+  
   # GET /mlb_win_bets/1
   # GET /mlb_win_bets/1.json
   def show
