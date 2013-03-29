@@ -23,6 +23,14 @@
     <%= f.label :actual %><br />
     <%= f.text_field :actual %>
   </div>
+  <div class="field">
+    <%= f.label :mlb_team_id %><br />
+    <select name='mlb_team_id'>
+      <% @mlb_teams.each do |mlb_team| %>
+        <option value=<%= mlb_team.id %>><%= mlb_team.abbreviation %></option>
+      <% end%>
+    </select>  
+  </div>
   <div class="actions">
     <%= f.submit %>
   </div>

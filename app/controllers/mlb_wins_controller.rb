@@ -25,6 +25,10 @@ class MlbWinsController < ApplicationController
   # GET /mlb_wins/new.json
   def new
     @mlb_win = MlbWin.new
+    
+    # TODO calculate current year
+    yearFilter = MlbWin.where(year: 2013).select(:mlb_team_id).to_sql
+    @mlb_teams = MlbTeam.where("id not in (#{yearFilter})")
 
     respond_to do |format|
       format.html # new.html.erb
@@ -41,7 +45,8 @@ class MlbWinsController < ApplicationController
   # POST /mlb_wins.json
   def create
     @mlb_win = MlbWin.new(params[:mlb_win])
-
+    @mlb_win.mlb_team_id = params[:mlb_team_id]
+      
     respond_to do |format|
       if @mlb_win.save
         format.html { redirect_to @mlb_win, notice: 'Mlb win was successfully created.' }
