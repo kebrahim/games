@@ -2,7 +2,8 @@ class MlbWinsController < ApplicationController
   # GET /mlb_wins
   # GET /mlb_wins.json
   def index
-    @mlb_wins = MlbWin.all
+    # TODO filter by year
+    @mlb_wins = MlbWin.includes(:mlb_team).order("year DESC, mlb_teams.abbreviation").all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -26,9 +27,9 @@ class MlbWinsController < ApplicationController
   def new
     @mlb_win = MlbWin.new
     
-    # TODO calculate current year
-    yearFilter = MlbWin.where(year: 2013).select(:mlb_team_id).to_sql
-    @mlb_teams = MlbTeam.where("id not in (#{yearFilter})")
+    currentYear = Date.today.year
+    yearFilter = MlbWin.where(year: currentYear).select(:mlb_team_id).to_sql
+    @mlb_teams = MlbTeam.where("id not in (#{yearFilter})").order(:abbreviation)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -39,6 +40,7 @@ class MlbWinsController < ApplicationController
   # GET /mlb_wins/1/edit
   def edit
     @mlb_win = MlbWin.find(params[:id])
+    @mlb_teams = MlbTeam.where(id: @mlb_win.mlb_team_id)
   end
 
   # POST /mlb_wins

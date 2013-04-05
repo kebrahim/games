@@ -1,6 +1,7 @@
 Games::Application.routes.draw do
   resources :mlb_win_bets
-
+  post '/mlb_win_bets_save' => 'mlb_win_bets#bulksave'
+  
   resources :mlb_wins
 
   resources :mlb_teams

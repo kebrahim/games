@@ -2,7 +2,7 @@ class MlbTeamsController < ApplicationController
   # GET /mlb_teams
   # GET /mlb_teams.json
   def index
-    @mlb_teams = MlbTeam.all
+    @mlb_teams = MlbTeam.order(:league, :division, :city).all
 
     respond_to do |format|
       format.html # index.html.erb

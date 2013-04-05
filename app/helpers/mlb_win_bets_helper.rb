@@ -2,14 +2,14 @@ module MlbWinBetsHelper
   include ActionView::Helpers::TagHelper
   
   TABLE_CLASS = 'table table-striped table-bordered table-condensed center'
-  COL_NAMES = ['MLB Team', 'Line', 'Prediction', 'Amount']
+  COL_NAMES = ['MLB Team', 'Line', 'Prediction', 'Bet Amount']
     
   def division_table(mlb_wins, title)
     tags = []
     tags << content_tag(:h4, title)
     content_tag(:table, class: TABLE_CLASS) do
       tags << content_tag(:thead,
-          content_tag(:tr, 
+          content_tag(:tr,
               COL_NAMES.collect { |name| content_tag(:th, name)}.join.html_safe))
       tags << content_tag(:tbody) do
         mlb_wins.each do |mlb_win|
@@ -31,7 +31,7 @@ module MlbWinBetsHelper
   end
   
   def old_selector_table_row(mlb_win)
-    tablerow = "<tr>
+    tablerow = "<tr class='tdselect'>
             <td>" + mlb_win.mlb_team.abbreviation + "</td>
             <td>" + mlb_win.line.to_s + "</td>
             <td><select name='prediction" + mlb_win.id.to_s + "' class='input-small'>
@@ -55,5 +55,45 @@ module MlbWinBetsHelper
           </tr>"
     return tablerow
   end
-  
+
+  # TODO combine these two methods
+  def existing_bet_table_row(mlb_win_bet, row_number)
+    tablerow = "<tr class='tdselect'>
+            <td>" + row_number.to_s + "</td>
+            <td>" + mlb_win_bet.mlb_win.mlb_team.abbreviation + "</td>
+            <td>" + mlb_win_bet.mlb_win.line.to_s + "</td>
+            <td><select name='prediction" + mlb_win_bet.mlb_win.id.to_s + "' class='input-small'>
+                  <option value=1"
+    if mlb_win_bet.prediction == "Over"
+      tablerow << " selected"
+    end
+    tablerow <<                  ">Over</option>
+                  <option value=2"
+    if mlb_win_bet.prediction == "Under"
+      tablerow << " selected"
+    end
+    tablerow <<                  ">Under</option>
+                </select>
+            </td>
+            <td>
+              <select name='amount" + mlb_win_bet.mlb_win.id.to_s + "' class='input-small'>
+                                <option value=0>---</option>"
+    
+    # TODO 20 should be a const
+    (1..20).each do |n|
+      tablerow << "<option value=" + n.to_s
+      if mlb_win_bet.amount == n
+        tablerow << " selected"
+      end
+      tablerow << ">" + n.to_s + "</option>"                   
+    end
+ 
+    tablerow << 
+              "</select>
+            </td>
+            <td>" + (link_to 'X', mlb_win_bet, method: :delete, data: { confirm: 'Are you sure you want to remove this bet?' }).html_safe + "</td>
+          </tr>"
+    return tablerow.html_safe
+  end
+    
 end

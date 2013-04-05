@@ -64,3 +64,10 @@ table.vertmiddle td {vertical-align:middle;}
 	margin: 5px 0 5px;
 }
 table th {background-color: black; color:white;}
+.tdselect {
+	height: 40px;
+	line-height: 36px;
+}
+.tdselect select {
+	margin-bottom: 0px;
+}

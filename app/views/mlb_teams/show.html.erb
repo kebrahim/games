@@ -16,15 +16,18 @@
 </p>
 
 <p>
-  <b>Division:</b>
-  <%= @mlb_team.division %>
+  <b>League:</b>
+  <%= @mlb_team.league %>
 </p>
 
 <p>
-  <b>League:</b>
-  <%= @mlb_team.league %>
+  <b>Division:</b>
+  <%= @mlb_team.division %>
 </p>
 
 
 <%= link_to 'Edit', edit_mlb_team_path(@mlb_team) %> |
 <%= link_to 'Back', mlb_teams_path %>
+<br/><br/>
+<%= link_to 'New Mlb team', new_mlb_team_path, class: 'btn' %>
+
