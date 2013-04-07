@@ -8,13 +8,12 @@ class MlbWinBetsController < ApplicationController
     
     # pull all mlb over/unders which have not been assigned by the logged-in user for the current
     # year, separated by division
-    current_year = Date.today.year
-    @nl_east = division_query(@logged_in_user.id, current_year, "NL", "East")
-    @nl_central = division_query(@logged_in_user.id, current_year, "NL", "Central")
-    @nl_west = division_query(@logged_in_user.id, current_year, "NL", "West")
-    @al_east = division_query(@logged_in_user.id, current_year, "AL", "East")
-    @al_central = division_query(@logged_in_user.id, current_year, "AL", "Central")
-    @al_west = division_query(@logged_in_user.id, current_year, "AL", "West")
+    @nl_east = availableWinsByDivision(@logged_in_user.id, "NL", "East")
+    @nl_central = availableWinsByDivision(@logged_in_user.id, "NL", "Central")
+    @nl_west = availableWinsByDivision(@logged_in_user.id, "NL", "West")
+    @al_east = availableWinsByDivision(@logged_in_user.id, "AL", "East")
+    @al_central = availableWinsByDivision(@logged_in_user.id, "AL", "Central")
+    @al_west = availableWinsByDivision(@logged_in_user.id, "AL", "West")
     
     respond_to do |format|
       format.html # index.html.erb
@@ -22,36 +21,26 @@ class MlbWinBetsController < ApplicationController
     end
   end
 
-  # Returns a query to MlbWins to return all of the over/unders, belonging to the specified league
-  # and division, which have NOT been bet on by the specified user during the specified year.
-  def division_query(user_id, year, league, division)
-    return MlbWin.joins("LEFT OUTER JOIN mlb_win_bets ON mlb_wins.id = mlb_win_bets.mlb_win_id")
-        .joins("LEFT OUTER JOIN users ON mlb_win_bets.user_id = users.id")
-        .where("(mlb_win_bets.user_id is null or mlb_win_bets.user_id <> " + 
-            user_id.to_s + ") and mlb_wins.year = " + year.to_s)
-        .joins(:mlb_team).where("mlb_teams.league = '" + league + "' and mlb_teams.division = '" +
-            division + "'")
-        .order("line DESC")
-  end
-  
+  # POST /mlb_win_bets_save
   def bulksave
     if params["cancel"].nil?
-      # get existing bets by user
       logged_in_user = getLoggedInUser
-      existing_bets = MlbWinBet.includes(:mlb_win).where(user_id: logged_in_user)
       current_year = Date.today.year
-      new_over_unders =
-          MlbWin.joins("LEFT OUTER JOIN mlb_win_bets ON mlb_wins.id = mlb_win_bets.mlb_win_id")
-          .joins("LEFT OUTER JOIN users ON mlb_win_bets.user_id = users.id")
-          .where("(mlb_win_bets.user_id is null or mlb_win_bets.user_id <> " + 
-              logged_in_user.id.to_s + ") and mlb_wins.year = " + current_year.to_s)
+
+      # get existing bets by user
+      existing_bets =
+          MlbWinBet.includes(:mlb_win)
+                   .where("user_id = " + logged_in_user.id.to_s + " and mlb_wins.year = " + current_year.to_s)
+
+      # get potential new bets
+      newOverUnders = availableWins(logged_in_user.id)
       
       # get total number of bets
       new_bet_count = 0
-      new_over_unders.each do |new_over_under|
+      newOverUnders.each do |new_over_under|
         predictionKey = "prediction" + new_over_under.id.to_s
         amountKey = "amount" + new_over_under.id.to_s
-        if (!getBetName(params[predictionKey]).empty? && params[amountKey] != "0")
+        if (!MlbWinBet.predictionName(params[predictionKey]).empty? && params[amountKey] != "0")
           new_bet_count += 1
         end
       end
@@ -59,7 +48,7 @@ class MlbWinBetsController < ApplicationController
       # if total bets > 10, don't save & show error
       if ((existing_bets.count + new_bet_count) > 10)
         confirmationMessage = "Error: Too many bets!"
-      else 
+      else
         # update attributes of existing bets
         existing_bets.each do |existing_bet|
           amountKey = "amount" + existing_bet.mlb_win_id.to_s
@@ -68,21 +57,21 @@ class MlbWinBetsController < ApplicationController
           end
       
           predictionKey = "prediction" + existing_bet.mlb_win_id.to_s
-          if getBetName(params[predictionKey]) != existing_bet.prediction
-            existing_bet.update_attribute(:prediction, getBetName(params[predictionKey]))  
+          if MlbWinBet.predictionName(params[predictionKey]) != existing_bet.prediction
+            existing_bet.update_attribute(:prediction, MlbWinBet.predictionName(params[predictionKey]))  
           end
           # TODO combine changed attributes into one call to update_attribute
         end
      
         # create new o/u bets
-        new_over_unders.each do |new_over_under|
+        newOverUnders.each do |new_over_under|
           predictionKey = "prediction" + new_over_under.id.to_s
           amountKey = "amount" + new_over_under.id.to_s
-          if (!getBetName(params[predictionKey]).empty? && params[amountKey] != "0")
+          if (!MlbWinBet.predictionName(params[predictionKey]).empty? && params[amountKey] != "0")
             new_bet = MlbWinBet.new
             new_bet.mlb_win_id = new_over_under.id
             new_bet.user_id = logged_in_user.id
-            new_bet.prediction = getBetName(params[predictionKey])
+            new_bet.prediction = MlbWinBet.predictionName(params[predictionKey])
             new_bet.amount = params[amountKey].to_i
             new_bet.save
           end
@@ -95,6 +84,19 @@ class MlbWinBetsController < ApplicationController
     redirect_to mlb_win_bets_path, notice: confirmationMessage
   end
   
+  # GET /mlb_over_unders
+  def allusers
+    @current_year = Date.today.year
+    # show all bets for all users
+    @existing_bets = MlbWinBet.order(:user_id, "amount DESC")
+
+    # TODO show expected winning bets, based on current standings
+    # TODO pull data from mlb.com?
+    respond_to do |format|
+      format.html # all.html.erb
+    end
+  end
+
   # GET /mlb_win_bets/1
   # GET /mlb_win_bets/1.json
   def show
@@ -166,19 +168,46 @@ class MlbWinBetsController < ApplicationController
     end
   end
   
+  # Returns the currently logged in user
   def getLoggedInUser
     # TODO determine logged-in user
-    return User.first 
+    return User.last
   end
-  
-  # TODO move to model
-  def getBetName(betId)
-    if betId == "1"
-      return "Over"
-    elsif betId == "2"
-      return "Under"
-    else
-      return ""
+
+  # Returns all of the over/unders which have NOT been bet on by the specified user in the current
+  # year.
+  def availableWins(userId)
+    return availableWinsByDivision(userId, nil, nil)
+  end
+
+  # Returns all of the over/unders for teams belonging to the specified league and division, which
+  # have NOT been bet on by the specified user in the current year.
+  def availableWinsByDivision(userId, league, division)
+    year = Date.today.year
+
+    # get all teams that have been bet on by the specified user in the current year
+    teamFilter =
+        MlbWin.joins(:mlb_win_bets)
+              .where("year = " + year.to_s + " and user_id = " + userId.to_s)
+              .select(:mlb_team_id).to_sql
+
+    # get all over/unders which not been bet on in the current year
+    availableWinsQuery =
+        MlbWin.joins(:mlb_team)
+              .where(year: year)
+              .where("mlb_teams.id not in (#{teamFilter})")
+
+    # filter by league, if specified
+    if !league.nil?
+      availableWinsQuery = availableWinsQuery.where("mlb_teams.league = '" + league + "'")
     end
+
+    # filter by division, if specified
+    if !division.nil?
+      availableWinsQuery = availableWinsQuery.where("mlb_teams.division = '" + division + "'")
+    end
+
+    # sort by over/under line
+    return availableWinsQuery.order("line DESC")
   end
 end

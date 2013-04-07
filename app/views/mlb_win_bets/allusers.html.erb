@@ -1,0 +1,38 @@
+<div class='row-fluid'><div class='span12 center'>
+<h3>MLB Over/Unders <%= @current_year %></h3>
+
+<div class='row-fluid'><div class='span12 center'>
+  <% last_user_id = -1 %>
+  <% first_user = true %>
+
+  <% @existing_bets.each do |bet| %>
+    <% if last_user_id != bet.user_id %>
+      <% last_user_id = bet.user_id %>
+      <% if first_user == false %>
+        </table>
+      <% else %>
+        <% first_user = false %>
+      <% end %>
+
+      <h4><%= bet.user.first_name %>'s Bets</h4>
+      <table class='table table-striped table-bordered table-condensed center'>
+        <thead>
+          <tr>
+            <th>MLB Team</th>
+            <th>Line</th>
+            <th>Prediction</th>
+            <th>Bet Amount</th>
+          </tr>
+        </thead>
+    <% end %>
+          <tr>
+          	<td><%= bet.mlb_win.mlb_team.abbreviation %></td>
+          	<td><%= bet.mlb_win.line.to_s %></td>
+          	<td><%= bet.prediction %></td>
+          	<td><%= bet.amount.to_s %></td>
+          </tr>
+  <% end %>
+       </table>
+</div></div>
+
+</div></div>
