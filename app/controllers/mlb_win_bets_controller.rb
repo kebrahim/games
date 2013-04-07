@@ -89,15 +89,32 @@ class MlbWinBetsController < ApplicationController
     redirect_to mlb_win_bets_path, notice: confirmationMessage
   end
   
-  # GET /mlb_over_unders
-  # GET /MLBOverUnders
+  # GET /mlbOverUnders
   def allusers
-    @current_year = Date.today.year
-    # show all bets for all users
-    @existing_bets = MlbWinBet.order(:user_id, "amount DESC")
+    # TODO logged-in user
+    @user = User.last
+    @currentYear = Date.today.year
+    
+    # show bets for logged-in user
+    @userBets =
+        MlbWinBet.joins(:mlb_win)
+                 .where("mlb_wins.year = " + @currentYear.to_s)
+                 .where("user_id = " + @user.id.to_s)
+                 .order("amount DESC")
 
-    # TODO show expected winning bets, based on current standings
+    # TODO user can only change bets during certain window
+    @betsEditable = true
+
+    # TODO show expected winning bets, based on current standings    
     # TODO pull data from mlb.com?
+
+    # show all bets for all users
+    # TODO collapse-all tables; allow user to expand
+    @allBets =
+        MlbWinBet.joins(:mlb_win)
+                 .where("mlb_wins.year = " + @currentYear.to_s)
+                 .order(:user_id, "amount DESC")
+
     respond_to do |format|
       format.html # all.html.erb
     end

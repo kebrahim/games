@@ -1,8 +1,8 @@
 Games::Application.routes.draw do
   resources :mlb_win_bets
   post '/mlb_win_bets_save' => 'mlb_win_bets#bulksave'
-  get '/mlb_over_unders' => 'mlb_win_bets#allusers'
-  get '/MLBOverUnders' => 'mlb_win_bets#allusers'
+  get '/mlbOverUnders' => 'mlb_win_bets#allusers'
+  get '/mlbOverUnderBets' => 'mlb_win_bets#index'
 
   resources :mlb_wins
 
@@ -10,6 +10,7 @@ Games::Application.routes.draw do
 
   resources :users
   get '/editProfile' => 'users#editprofile'
+  get '/myGames' => 'users#mygames'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

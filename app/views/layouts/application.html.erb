@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Games</title>
+  <title>Rotiss Games</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
@@ -17,7 +17,8 @@
       	<div class='navbar-inner'>
       	  <div class="brand">Rotiss Games</div>
        	  <ul class='nav'>
-       	  	<li><a href='mlb_win_bets'>My Games</a></li>
+            <li class='divider-vertical'></li>
+       	  	<li><a href='myGames'>My Games</a></li>
             
             <li class='divider-vertical'></li>
        	    <li class='dropdown'>
@@ -26,7 +27,7 @@
               </a>
               <ul class='dropdown-menu'>
                 <li>
-                  <a href='MLBOverUnders'>Over/Unders</a>
+                  <a href='mlbOverUnders'>Over/Unders</a>
                 </li>
               </ul>
             </li>

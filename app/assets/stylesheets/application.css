@@ -77,3 +77,17 @@ label {
   display: inline !important;
   font-weight: bold !important;
 }
+
+/* Links */
+.btn-primary {color:white !important; }
+
+.nexttoh1 {
+  height:62px; 
+  line-height:58px;
+}
+
+/* images */
+.img_100_50 {
+  width: 100px;
+  height: 50px;
+}

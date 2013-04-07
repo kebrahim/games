@@ -1,4 +1,12 @@
 class UsersController < ApplicationController
+  # GET /mygames
+  def mygames
+    # TODO get logged-in user
+    @user = User.last
+
+    # TODO show games user is currently playing
+  end
+
   # GET /users
   # GET /users.json
   def index
