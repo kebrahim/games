@@ -4,7 +4,10 @@ class MlbWinBetsController < ApplicationController
   def index
     # get all existing bets
     @logged_in_user = getLoggedInUser
-    @mlb_win_bets = MlbWinBet.includes(:mlb_win).where(user_id: @logged_in_user).order("amount DESC")
+    @mlb_win_bets =
+        MlbWinBet.includes(:mlb_win)
+                 .where(user_id: @logged_in_user)
+                 .order("amount DESC")
     
     # pull all mlb over/unders which have not been assigned by the logged-in user for the current
     # year, separated by division
@@ -30,7 +33,8 @@ class MlbWinBetsController < ApplicationController
       # get existing bets by user
       existing_bets =
           MlbWinBet.includes(:mlb_win)
-                   .where("user_id = " + logged_in_user.id.to_s + " and mlb_wins.year = " + current_year.to_s)
+                   .where("user_id = " + logged_in_user.id.to_s + 
+                          " and mlb_wins.year = " + current_year.to_s)
 
       # get potential new bets
       newOverUnders = availableWins(logged_in_user.id)
@@ -58,7 +62,8 @@ class MlbWinBetsController < ApplicationController
       
           predictionKey = "prediction" + existing_bet.mlb_win_id.to_s
           if MlbWinBet.predictionName(params[predictionKey]) != existing_bet.prediction
-            existing_bet.update_attribute(:prediction, MlbWinBet.predictionName(params[predictionKey]))  
+            existing_bet.update_attribute(
+                :prediction, MlbWinBet.predictionName(params[predictionKey]))  
           end
           # TODO combine changed attributes into one call to update_attribute
         end
@@ -85,6 +90,7 @@ class MlbWinBetsController < ApplicationController
   end
   
   # GET /mlb_over_unders
+  # GET /MLBOverUnders
   def allusers
     @current_year = Date.today.year
     # show all bets for all users

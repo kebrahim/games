@@ -71,3 +71,9 @@ table th {background-color: black; color:white;}
 .tdselect select {
 	margin-bottom: 0px;
 }
+
+/* Labels */
+label {
+  display: inline !important;
+  font-weight: bold !important;
+}

@@ -18,18 +18,54 @@
       	  <div class="brand">Rotiss Games</div>
        	  <ul class='nav'>
        	  	<li><a href='mlb_win_bets'>My Games</a></li>
-       	  	<li><a href='mlb_teams'>All Games</a></li>
+            
+            <li class='divider-vertical'></li>
+       	    <li class='dropdown'>
+              <a href='#' class='dropdown-toggle profiledropdown' data-toggle='dropdown'>
+                MLB&nbsp<b class='caret'></b>
+              </a>
+              <ul class='dropdown-menu'>
+                <li>
+                  <a href='MLBOverUnders'>Over/Unders</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class='dropdown'>
+              <a href='#' class='dropdown-toggle profiledropdown' data-toggle='dropdown'>
+                NBA&nbsp<b class='caret'></b>
+              </a>
+              <ul class='dropdown-menu'>
+                <li>
+                  <a href='#'>Coming soon...</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class='dropdown'>
+              <a href='#' class='dropdown-toggle profiledropdown' data-toggle='dropdown'>
+                NFL&nbsp<b class='caret'></b>
+              </a>
+              <ul class='dropdown-menu'>
+                <li>
+                  <a href='#'>Coming soon...</a>
+                </li>
+              </ul>
+            </li>
+
        	  </ul>
        	  <ul class='nav pull-right'>
        	  	<li class="divider-vertical"></li>
   	        <li class='dropdown'>
-  	      	  <a href='#' class='dropdown-toggle  profiledropdown' data-toggle='dropdown'>
-  	            Hi Kurt!&nbsp<b class='caret'></b>
+  	      	  <a href='#' class='dropdown-toggle profiledropdown' data-toggle='dropdown'>
+  	            Hi <%= getLoggedInUser.first_name %>!&nbsp<b class='caret'></b>
   	          </a>
   	          <ul class='dropdown-menu'>
-  	          	<li><a href='editProfilePage.php'><i class="icon-edit"></i>&nbsp&nbspEdit profile</a></li>
+  	          	<li>
+                  <a href='editProfile'><i class="icon-edit"></i>&nbsp&nbspEdit profile</a>
+                </li>
   	            <li class="divider"></li>
-  	            <li><a href='logoutPage.php'><i class="icon-eject"></i>&nbsp&nbspSign out</a></li>
+  	            <li><a href='logout'><i class="icon-eject"></i>&nbsp&nbspSign out</a></li>
   	          </ul>
   	        </li>
   	      </ul>

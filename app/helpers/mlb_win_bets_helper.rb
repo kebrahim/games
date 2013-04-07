@@ -91,7 +91,9 @@ module MlbWinBetsHelper
     tablerow << 
               "</select>
             </td>
-            <td>" + (link_to 'X', mlb_win_bet, method: :delete, data: { confirm: 'Are you sure you want to remove this bet?' }).html_safe + "</td>
+            <td>" + (link_to 'X', mlb_win_bet, method: :delete, 
+                    data: { confirm: 'Are you sure you want to remove this bet?' }).html_safe + 
+           "</td>
           </tr>"
     return tablerow.html_safe
   end
