@@ -1,12 +1,12 @@
 class ApplicationController < ActionController::Base
   helper :all
   protect_from_forgery
+  helper_method :current_user
 
-  helper_method :getLoggedInUser
+  private
 
-  def getLoggedInUser
-    # TODO get user
-    return User.last
+  def current_user
+    @current_user ||= User.find(session[:user_id]) if session[:user_id]
   end
 
   # TODO highlight correct dropdown

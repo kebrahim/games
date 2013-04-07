@@ -9,8 +9,15 @@ Games::Application.routes.draw do
   resources :mlb_teams
 
   resources :users
+  get 'sign_up' => 'users#new', :as => 'sign_up'
+  #root :to => 'users#new'
   get '/editProfile' => 'users#editprofile'
-  get '/myGames' => 'users#mygames'
+  get '/myGames' => 'users#mygames', :as => 'my_games'
+  
+  resources :sessions
+  get "logout" => "sessions#destroy", :as => "logout"
+  get "login" => "sessions#new", :as => "login"
+  root :to => 'sessions#new'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
