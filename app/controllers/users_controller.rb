@@ -56,14 +56,18 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
 
-    respond_to do |format|
-      if @user.save
-        format.html { redirect_to root_url, notice: 'User was successfully created.' }
-        format.json { render json: @user, status: :created, location: @user }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+    if !params["commit"].nil?
+      respond_to do |format|
+        if @user.save
+          format.html { redirect_to root_url, notice: 'User was successfully created.' }
+          format.json { render json: @user, status: :created, location: @user }
+        else
+          format.html { render action: "new" }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      redirect_to root_url
     end
   end
 
@@ -78,7 +82,7 @@ class UsersController < ApplicationController
           format.html { redirect_to '/editProfile', notice: 'User successfully updated.' }
           format.json { head :no_content }
         else
-          format.html { render action: "edit" }
+          format.html { render action: 'editprofile' }
           format.json { render json: @user.errors, status: :unprocessable_entity }
         end
       end
