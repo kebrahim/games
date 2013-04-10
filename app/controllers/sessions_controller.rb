@@ -1,5 +1,11 @@
 class SessionsController < ApplicationController
   def new
+  	if session[:user_id]
+      user = User.find(session[:user_id])
+    end
+    if !user.nil?
+      redirect_to my_games_url
+    end
   end
 
   def create

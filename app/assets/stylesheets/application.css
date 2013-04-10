@@ -79,7 +79,7 @@ label {
 }
 
 /* Links */
-.btn-primary, .btn-danger {color:white !important; }
+.btn-primary, .btn-danger, .btn-inverse, .btn-warning {color:white !important; }
 
 .nexttoh1 {
   height:62px; 
@@ -132,4 +132,12 @@ label {
 
 #error_explanation {
   margin: 0 auto;
+}
+
+.brandctr {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: auto;
 }

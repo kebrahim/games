@@ -1,26 +1,32 @@
 class MlbWinBetsController < ApplicationController
+  skip_before_filter :verify_authenticity_token
+
   # GET /mlb_win_bets
   # GET /mlb_win_bets.json
   def index
     # get all existing bets
     @logged_in_user = getLoggedInUser
-    @mlb_win_bets =
-        MlbWinBet.includes(:mlb_win)
-                 .where(user_id: @logged_in_user)
-                 .order("amount DESC")
+    if !@logged_in_user.nil?
+      @mlb_win_bets =
+          MlbWinBet.includes(:mlb_win)
+                   .where(user_id: @logged_in_user)
+                   .order("amount DESC")
     
-    # pull all mlb over/unders which have not been assigned by the logged-in user for the current
-    # year, separated by division
-    @nl_east = availableWinsByDivision(@logged_in_user.id, "NL", "East")
-    @nl_central = availableWinsByDivision(@logged_in_user.id, "NL", "Central")
-    @nl_west = availableWinsByDivision(@logged_in_user.id, "NL", "West")
-    @al_east = availableWinsByDivision(@logged_in_user.id, "AL", "East")
-    @al_central = availableWinsByDivision(@logged_in_user.id, "AL", "Central")
-    @al_west = availableWinsByDivision(@logged_in_user.id, "AL", "West")
+      # pull all mlb over/unders which have not been assigned by the logged-in user for the current
+      # year, separated by division
+      @nl_east = availableWinsByDivision(@logged_in_user.id, "NL", "East")
+      @nl_central = availableWinsByDivision(@logged_in_user.id, "NL", "Central")
+      @nl_west = availableWinsByDivision(@logged_in_user.id, "NL", "West")
+      @al_east = availableWinsByDivision(@logged_in_user.id, "AL", "East")
+      @al_central = availableWinsByDivision(@logged_in_user.id, "AL", "Central")
+      @al_west = availableWinsByDivision(@logged_in_user.id, "AL", "West")
     
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @mlb_win_bets }
+      respond_to do |format|
+        format.html # index.html.erb
+        format.json { render json: @mlb_win_bets }
+      end
+    else
+      redirect_to root_url
     end
   end
 
@@ -86,37 +92,40 @@ class MlbWinBetsController < ApplicationController
     end
     
     # redirect to index.html w/ confirmation message
-    redirect_to mlb_win_bets_path, notice: confirmationMessage
+    redirect_to "/mlbOverUnderBets", notice: confirmationMessage
   end
   
   # GET /mlbOverUnders
   def allusers
-    # TODO logged-in user
-    @user = User.last
-    @currentYear = Date.today.year
+    @user = getLoggedInUser
+    if !@user.nil?
+      @currentYear = Date.today.year
     
-    # show bets for logged-in user
-    @userBets =
-        MlbWinBet.joins(:mlb_win)
-                 .where("mlb_wins.year = " + @currentYear.to_s)
-                 .where("user_id = " + @user.id.to_s)
-                 .order("amount DESC")
+      # show bets for logged-in user
+      @userBets =
+          MlbWinBet.joins(:mlb_win)
+                   .where("mlb_wins.year = " + @currentYear.to_s)
+                   .where("user_id = " + @user.id.to_s)
+                   .order("amount DESC")
 
-    # TODO user can only change bets during certain window
-    @betsEditable = true
+      # TODO user can only change bets during certain window
+      @betsEditable = true
 
-    # TODO show expected winning bets, based on current standings    
-    # TODO pull data from mlb.com?
+      # TODO show expected winning bets, based on current standings    
+      # TODO pull data from mlb.com?
 
-    # show all bets for all users
-    # TODO collapse-all tables; allow user to expand
-    @allBets =
-        MlbWinBet.joins(:mlb_win)
-                 .where("mlb_wins.year = " + @currentYear.to_s)
-                 .order(:user_id, "amount DESC")
+      # show all bets for all users
+      # TODO collapse-all tables; allow user to expand
+      @allBets =
+          MlbWinBet.joins(:mlb_win)
+                   .where("mlb_wins.year = " + @currentYear.to_s)
+                   .order(:user_id, "amount DESC")
 
-    respond_to do |format|
-      format.html # all.html.erb
+      respond_to do |format|
+        format.html # all.html.erb
+      end
+    else
+      redirect_to root_url
     end
   end
 
@@ -193,8 +202,11 @@ class MlbWinBetsController < ApplicationController
   
   # Returns the currently logged in user
   def getLoggedInUser
-    # TODO determine logged-in user
-    return User.last
+    if session[:user_id]
+      return User.find(session[:user_id])
+    else
+      return nil
+    end
   end
 
   # Returns all of the over/unders which have NOT been bet on by the specified user in the current

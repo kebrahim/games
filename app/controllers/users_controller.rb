@@ -2,9 +2,13 @@ class UsersController < ApplicationController
   # GET /mygames
   def mygames
     # TODO get logged-in user
-    @user = User.last
-
-    # TODO show games user is currently playing
+    @user = getLoggedInUser
+    if !@user.nil?
+      @hasMLBWinBets = MlbWinBet.where(user_id: @user).count > 0
+      # TODO show games user is currently playing; new table for users to sign up for games
+    else
+      redirect_to root_url
+    end
   end
 
   # GET /users
@@ -47,8 +51,10 @@ class UsersController < ApplicationController
 
   # GET /editProfile
   def editprofile
-    # TODO get logged-in user
-    @user = User.last
+    @user = getLoggedInUser
+    if @user.nil?
+      redirect_to root_url
+    end
   end
 
   # POST /users
@@ -100,6 +106,14 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to users_url }
       format.json { head :no_content }
+    end
+  end
+
+  def getLoggedInUser
+    if session[:user_id]
+      return User.find(session[:user_id])
+    else
+      return nil
     end
   end
 end
