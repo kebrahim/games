@@ -10,7 +10,6 @@ Games::Application.routes.draw do
 
   resources :users
   get 'sign_up' => 'users#new', :as => 'sign_up'
-  #root :to => 'users#new'
   get '/editProfile' => 'users#editprofile'
   get '/myGames' => 'users#mygames', :as => 'my_games'
   
