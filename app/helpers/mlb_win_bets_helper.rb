@@ -3,6 +3,7 @@ module MlbWinBetsHelper
   
   TABLE_CLASS = 'table table-striped table-bordered table-condensed center'
   COL_NAMES = ['MLB Team', 'Line', 'Prediction', 'Bet Amount']
+  STANDINGS_COL_NAMES = ['MLB Team', 'Record', 'Predicted', 'Line', 'Result']
     
   def division_table(mlb_wins, title)
     tags = []
@@ -97,5 +98,57 @@ module MlbWinBetsHelper
           </tr>"
     return tablerow.html_safe
   end
-    
+
+  def division_standings_table(league, division, year)
+    tags = []
+    mlb_wins = 
+        MlbWin.joins(:mlb_team)
+              .where(year: year)
+              .where("mlb_teams.league = '" + league +
+                     "' and mlb_teams.division = '" + division + "'")
+              .order("line DESC")
+    tags << content_tag(:h5, league + " " + division)
+    content_tag(:table, class: TABLE_CLASS) do
+      tags << content_tag(:thead,
+          content_tag(:tr,
+              STANDINGS_COL_NAMES.collect { |name| content_tag(:th, name)}.join.html_safe))
+      tags << content_tag(:tbody) do
+        mlb_wins.each do |mlb_win|
+          tags << team_standings_row(mlb_win).html_safe
+        end
+      end #content_tag :tbody
+      tags.join.html_safe     
+    end #content_tag :table
+  end
+  
+  def team_standings_row(mlb_win)
+    # TODO get current record from MLB
+    wins = 0
+    losses = 0
+    games = wins + losses
+    if games > 0
+      pred_wins = ((wins / games.to_f) * 162).round
+      pred_losses = 162 - pred_wins
+    else
+      pred_wins = 0
+      pred_losses = 0
+    end
+    if pred_wins < mlb_win.line
+      result = 'Under'
+    elsif pred_wins > mlb_win.line
+      result = 'Over'      
+    else
+      result = 'Push'
+    end
+      
+    tablerow =
+       "<tr>
+          <td>" + mlb_win.mlb_team.abbreviation + "</td>
+          <td>" + wins.to_s + "-" + losses.to_s + "</td>
+          <td>" + pred_wins.to_s + "-" + pred_losses.to_s + "</td>
+          <td>" + mlb_win.line.to_s + "</td>
+          <td>" + result + "</td>
+        </tr>"
+    return tablerow
+  end
 end
