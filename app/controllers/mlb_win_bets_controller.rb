@@ -109,7 +109,7 @@ class MlbWinBetsController < ApplicationController
                    .order("amount DESC")
 
       # TODO user can only change bets during certain window
-      @betsEditable = false
+      @betsEditable = true
 
       # TODO show expected winning bets, based on current standings    
       # TODO pull data from mlb.com?
