@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130324223359) do
+ActiveRecord::Schema.define(:version => 20130422221340) do
 
   create_table "mlb_teams", :force => true do |t|
     t.string   "city"
@@ -45,6 +45,16 @@ ActiveRecord::Schema.define(:version => 20130324223359) do
   end
 
   add_index "mlb_wins", ["mlb_team_id"], :name => "index_mlb_wins_on_mlb_team_id"
+
+  create_table "nba_teams", :force => true do |t|
+    t.string   "city"
+    t.string   "name"
+    t.string   "abbreviation"
+    t.string   "division"
+    t.string   "league"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "users", :force => true do |t|
     t.string   "first_name"

@@ -3,7 +3,10 @@ module NavigationHelper
   # construct mapping of sport to game
   MY_GAMES_BUTTON = 1
   MLB_OVER_UNDERS_BUTTON = 2
-  EDIT_PROFILE_BUTTON = 3
+  NBA_PLAYOFFS_BUTTON = 3
+  EDIT_PROFILE_BUTTON = 4
+  ADMIN_MLB_TEAMS_BUTTON = 5
+  ADMIN_NBA_TEAMS_BUTTON = 6
 
   # Returns the navigation bar HTML w/ the specified button selected
   # TODO pull list of games from db
@@ -21,7 +24,7 @@ module NavigationHelper
       navbar << "><a href='myGames'>My Games</a></li>
             <li class='divider-vertical'></li>
        	    <li class='dropdown"
-      if (button == MLB_OVER_UNDERS_BUTTON)
+      if (isMlbButton(button))
         navbar << " active"
       end
       navbar <<               "'>
@@ -39,13 +42,21 @@ module NavigationHelper
               </ul>
             </li>
 
-            <li class='dropdown'>
+            <li class='dropdown"
+      if (isNbaButton(button))
+        navbar << " active"
+      end
+      navbar <<               "'>
               <a href='#' class='dropdown-toggle profiledropdown' data-toggle='dropdown'>
                 NBA&nbsp<b class='caret'></b>
               </a>
               <ul class='dropdown-menu'>
-                <li>
-                  <a href='#'>Coming soon...</a>
+                <li"
+      if (button == NBA_PLAYOFFS_BUTTON)
+        navbar << " class='active'"
+      end
+      navbar <<    ">
+                  <a href='nbaPlayoffs'>Playoffs</a>
                 </li>
               </ul>
             </li>
@@ -59,9 +70,36 @@ module NavigationHelper
                   <a href='#'>Coming soon...</a>
                 </li>
               </ul>
-            </li>
-          </ul>
-          
+            </li>"
+      if (current_user.is_admin == true)
+        navbar << 
+           "<li class='dropdown"
+        if (isAdminButton(button))
+          navbar << " active"
+        end
+        navbar <<             "'>
+              <a href='#' class='dropdown-toggle profiledropdown' data-toggle='dropdown'>
+                Admin&nbsp<b class='caret'></b>
+              </a>
+              <ul class='dropdown-menu'>
+                <li"
+        if (button == ADMIN_MLB_TEAMS_BUTTON)
+          navbar << " class='active'"
+        end
+        navbar <<    ">
+                  <a href='mlb_teams'>MLB Teams</a>
+                </li>
+                <li"
+        if (button == ADMIN_NBA_TEAMS_BUTTON)
+          navbar << " class='active'"
+        end
+        navbar <<    ">
+                  <a href='nba_teams'>NBA Teams</a>
+                </li>
+              </ul>
+            </li>"
+      end
+      navbar << "</ul>
           <ul class='nav pull-right'>
             <li class='divider-vertical'></li>
   	        <li class='dropdown"
@@ -92,5 +130,17 @@ module NavigationHelper
   	
   	navbar << "</div></div>"
   	return navbar.html_safe
+  end
+
+  def isMlbButton(button)
+    return (button == MLB_OVER_UNDERS_BUTTON)
+  end
+
+  def isNbaButton(button)
+    return (button == NBA_PLAYOFFS_BUTTON)
+  end
+
+  def isAdminButton(button)
+    return (button == ADMIN_MLB_TEAMS_BUTTON) || (button == ADMIN_NBA_TEAMS_BUTTON)
   end
 end
