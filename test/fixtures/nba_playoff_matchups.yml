@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  year: 1
+  round: 1
+  position: 1
+  team1_seed: 1
+  team2_seed: 1
+  total_games: 1
+
+two:
+  year: 1
+  round: 1
+  position: 1
+  team1_seed: 1
+  team2_seed: 1
+  total_games: 1

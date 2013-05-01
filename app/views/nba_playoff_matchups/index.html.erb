@@ -1,0 +1,33 @@
+<h1>Listing nba_playoff_matchups</h1>
+
+<table>
+  <tr>
+    <th>Year</th>
+    <th>Round</th>
+    <th>Position</th>
+    <th>Team1 seed</th>
+    <th>Team2 seed</th>
+    <th>Total games</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @nba_playoff_matchups.each do |nba_playoff_matchup| %>
+  <tr>
+    <td><%= nba_playoff_matchup.year %></td>
+    <td><%= nba_playoff_matchup.round %></td>
+    <td><%= nba_playoff_matchup.position %></td>
+    <td><%= nba_playoff_matchup.team1_seed %></td>
+    <td><%= nba_playoff_matchup.team2_seed %></td>
+    <td><%= nba_playoff_matchup.total_games %></td>
+    <td><%= link_to 'Show', nba_playoff_matchup %></td>
+    <td><%= link_to 'Edit', edit_nba_playoff_matchup_path(nba_playoff_matchup) %></td>
+    <td><%= link_to 'Destroy', nba_playoff_matchup, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Nba playoff matchup', new_nba_playoff_matchup_path %>

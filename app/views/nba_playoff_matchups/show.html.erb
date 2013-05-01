@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Year:</b>
+  <%= @nba_playoff_matchup.year %>
+</p>
+
+<p>
+  <b>Round:</b>
+  <%= @nba_playoff_matchup.round %>
+</p>
+
+<p>
+  <b>Position:</b>
+  <%= @nba_playoff_matchup.position %>
+</p>
+
+<p>
+  <b>Team1 seed:</b>
+  <%= @nba_playoff_matchup.team1_seed %>
+</p>
+
+<p>
+  <b>Team2 seed:</b>
+  <%= @nba_playoff_matchup.team2_seed %>
+</p>
+
+<p>
+  <b>Total games:</b>
+  <%= @nba_playoff_matchup.total_games %>
+</p>
+
+
+<%= link_to 'Edit', edit_nba_playoff_matchup_path(@nba_playoff_matchup) %> |
+<%= link_to 'Back', nba_playoff_matchups_path %>

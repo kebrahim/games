@@ -1,4 +1,6 @@
 Games::Application.routes.draw do
+  resources :nba_playoff_matchups
+
   resources :nba_teams
 
   resources :mlb_win_bets
