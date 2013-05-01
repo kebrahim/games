@@ -38,6 +38,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.6.1)
+    curb (0.8.3)
     daemons (1.1.8)
     erubis (2.7.0)
     eventmachine (0.12.10)
@@ -114,6 +115,7 @@ PLATFORMS
 DEPENDENCIES
   bcrypt-ruby
   coffee-rails (~> 3.2.1)
+  curb
   jquery-rails
   pg
   quiet_assets

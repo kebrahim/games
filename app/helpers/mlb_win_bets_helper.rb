@@ -123,6 +123,7 @@ module MlbWinBetsHelper
   
   def team_standings_row(mlb_win)
     # TODO get current record from MLB
+    # JSON.parse(Curl.get("https://erikberg.com/mlb/standings.json").body_str)
     wins = 0
     losses = 0
     games = wins + losses

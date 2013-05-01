@@ -42,3 +42,5 @@ gem 'bcrypt-ruby', :require => 'bcrypt'
 gem 'quiet_assets', :group => :development
 
 gem 'thin'
+
+gem 'curb'
