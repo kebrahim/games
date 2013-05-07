@@ -2,8 +2,11 @@ class MlbWinsController < ApplicationController
   # GET /mlb_wins
   # GET /mlb_wins.json
   def index
-    # TODO filter by year
-    @mlb_wins = MlbWin.includes(:mlb_team).order("year DESC, mlb_teams.abbreviation").all
+    # Show all MLB Over/Unders for the current year.
+    currentYear = Date.today.year
+    @mlb_wins = MlbWin.includes(:mlb_team)
+                      .where(year: currentYear)
+                      .order("year DESC, mlb_teams.abbreviation").all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -27,6 +30,8 @@ class MlbWinsController < ApplicationController
   def new
     @mlb_win = MlbWin.new
     
+    # Only show MLB teams that have not yet been assigned to an MLB Over/Under line for the current
+    # year.
     currentYear = Date.today.year
     yearFilter = MlbWin.where(year: currentYear).select(:mlb_team_id).to_sql
     @mlb_teams = MlbTeam.where("id not in (#{yearFilter})").order(:abbreviation)

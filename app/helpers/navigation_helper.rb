@@ -5,8 +5,18 @@ module NavigationHelper
   MLB_OVER_UNDERS_BUTTON = 2
   NBA_PLAYOFFS_BUTTON = 3
   EDIT_PROFILE_BUTTON = 4
+
+  # MLB admin buttons
   ADMIN_MLB_TEAMS_BUTTON = 5
-  ADMIN_NBA_TEAMS_BUTTON = 6
+  ADMIN_MLB_WINS_BUTTON = 6
+  
+  # NBA admin buttons
+  ADMIN_NBA_TEAMS_BUTTON = 7
+  ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON = 8
+
+  # NFL admin buttons
+
+  ADMIN_THRESHOLD = ADMIN_MLB_TEAMS_BUTTON
 
   # Returns the navigation bar HTML w/ the specified button selected
   # TODO pull list of games from db
@@ -90,11 +100,26 @@ module NavigationHelper
                   <a href='mlb_teams'>MLB Teams</a>
                 </li>
                 <li"
+        if (button == ADMIN_MLB_WINS_BUTTON)
+          navbar << " class='active'"
+        end
+        navbar <<    ">
+                  <a href='mlb_wins'>MLB Over/Unders</a>
+                </li>
+                <li class='divider'></li>
+                <li"
         if (button == ADMIN_NBA_TEAMS_BUTTON)
           navbar << " class='active'"
         end
         navbar <<    ">
                   <a href='nba_teams'>NBA Teams</a>
+                </li>
+                <li"
+        if (button == ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON)
+          navbar << " class='active'"
+        end
+        navbar <<    ">
+                  <a href='nba_playoff_matchups'>NBA Playoffs</a>
                 </li>
               </ul>
             </li>"
@@ -141,6 +166,6 @@ module NavigationHelper
   end
 
   def isAdminButton(button)
-    return (button == ADMIN_MLB_TEAMS_BUTTON) || (button == ADMIN_NBA_TEAMS_BUTTON)
+    return (button >= ADMIN_THRESHOLD)
   end
 end

@@ -6,6 +6,7 @@
 
 <table class='table table-striped table-bordered table-condensed center'>
   <thead><tr>
+    <th>ID</th>
     <th>City</th>
     <th>Name</th>
     <th>Abbreviation</th>
@@ -18,6 +19,7 @@
 
 <% @nba_teams.each do |nba_team| %>
   <tr>
+    <td><%= nba_team.id %></td>
     <td><%= nba_team.city %></td>
     <td><%= nba_team.name %></td>
     <td><%= nba_team.abbreviation %></td>

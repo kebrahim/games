@@ -1,6 +1,12 @@
-<h1>Editing nba_playoff_matchup</h1>
+<%= navigationBar(NavigationHelper::ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON) %>
 
-<%= render 'form' %>
+<div class='row-fluid'><div class='span12 center'>
 
-<%= link_to 'Show', @nba_playoff_matchup %> |
-<%= link_to 'Back', nba_playoff_matchups_path %>
+  <h3>Editing NBA Playoff Matchup</h3>
+
+  <%= render 'form' %>
+
+  <%= link_to 'Show', @nba_playoff_matchup %> |
+  <%= link_to 'Back', nba_playoff_matchups_path %>
+
+</div></div>

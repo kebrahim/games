@@ -1,5 +1,10 @@
-<h1>New nba_playoff_matchup</h1>
 
-<%= render 'form' %>
+<%= navigationBar(NavigationHelper::ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON) %>
 
-<%= link_to 'Back', nba_playoff_matchups_path %>
+<div class='row-fluid'><div class='span12 center'>
+  <h3>Create New NBA Playoff Matchup</h3>
+
+  <%= render 'form' %>
+
+  <%= link_to 'Back', nba_playoff_matchups_path %>
+</div></div>

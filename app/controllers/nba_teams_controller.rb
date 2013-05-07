@@ -2,7 +2,7 @@ class NbaTeamsController < ApplicationController
   # GET /nba_teams
   # GET /nba_teams.json
   def index
-    @nba_teams = NbaTeam.all
+    @nba_teams = NbaTeam.order(:abbreviation).all
 
     respond_to do |format|
       format.html # index.html.erb

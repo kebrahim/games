@@ -1,33 +1,16 @@
-<h1>Listing nba_playoff_matchups</h1>
 
-<table>
-  <tr>
-    <th>Year</th>
-    <th>Round</th>
-    <th>Position</th>
-    <th>Team1 seed</th>
-    <th>Team2 seed</th>
-    <th>Total games</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+<%= navigationBar(NavigationHelper::ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON) %>
 
-<% @nba_playoff_matchups.each do |nba_playoff_matchup| %>
-  <tr>
-    <td><%= nba_playoff_matchup.year %></td>
-    <td><%= nba_playoff_matchup.round %></td>
-    <td><%= nba_playoff_matchup.position %></td>
-    <td><%= nba_playoff_matchup.team1_seed %></td>
-    <td><%= nba_playoff_matchup.team2_seed %></td>
-    <td><%= nba_playoff_matchup.total_games %></td>
-    <td><%= link_to 'Show', nba_playoff_matchup %></td>
-    <td><%= link_to 'Edit', edit_nba_playoff_matchup_path(nba_playoff_matchup) %></td>
-    <td><%= link_to 'Destroy', nba_playoff_matchup, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  </tr>
-<% end %>
-</table>
+<div class='row-fluid'><div class='span12 center'>
+<h3>Manage <%= @currentYear %> NBA Playoffs</h3>
+
+<%= admin_round_table(@currentYear, 1) %>
+<%= admin_round_table(@currentYear, 2) %>
+<%= admin_round_table(@currentYear, 3) %>
+<%= admin_round_table(@currentYear, 4) %>
 
 <br />
 
-<%= link_to 'New Nba playoff matchup', new_nba_playoff_matchup_path %>
+<%= link_to 'Create new matchup', new_nba_playoff_matchup_path, class:'btn' %>
+<br/><br/>
+</div></div>

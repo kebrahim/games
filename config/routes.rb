@@ -1,5 +1,7 @@
 Games::Application.routes.draw do
   resources :nba_playoff_matchups
+  #get '/nbaPlayoffs' => 'nba_playoff_matchups#allusers'
+  #get '/nbaPlayoffsBet' => 'nba_playoff_bets#index'
 
   resources :nba_teams
 

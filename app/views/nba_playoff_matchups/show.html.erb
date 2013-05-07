@@ -1,3 +1,8 @@
+<%= navigationBar(NavigationHelper::ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON) %>
+
+<div class='row-fluid'><div class='span12 center'>
+
+
 <p id="notice"><%= notice %></p>
 
 <p>
@@ -16,13 +21,22 @@
 </p>
 
 <p>
-  <b>Team1 seed:</b>
-  <%= @nba_playoff_matchup.team1_seed %>
+  <b>Team1:</b>
+  <%= @nba_playoff_matchup.team1_seed.to_s + ") " + @nba_playoff_matchup.nba_team1.abbreviation %>
 </p>
 
 <p>
-  <b>Team2 seed:</b>
-  <%= @nba_playoff_matchup.team2_seed %>
+  <b>Team2:</b>
+  <%= @nba_playoff_matchup.team2_seed.to_s + ") " + @nba_playoff_matchup.nba_team2.abbreviation %>
+</p>
+
+<p>
+  <b>Winner:</b>
+  <% if @nba_playoff_matchup.winning_nba_team.nil? %>
+    --
+  <% else %>
+    <%= @nba_playoff_matchup.winning_nba_team.abbreviation %>
+  <% end %>
 </p>
 
 <p>
@@ -33,3 +47,6 @@
 
 <%= link_to 'Edit', edit_nba_playoff_matchup_path(@nba_playoff_matchup) %> |
 <%= link_to 'Back', nba_playoff_matchups_path %>
+<br/><br/>
+
+</div></div>
