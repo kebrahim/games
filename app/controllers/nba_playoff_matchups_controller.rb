@@ -105,23 +105,60 @@ class NbaPlayoffMatchupsController < ApplicationController
       @nba_playoff_matchup.total_games = params["total_games"].to_i      
     end
 
-    if @nba_playoff_matchup.winning_nba_team_id == 0 || @nba_playoff_matchup.total_games == 0
-      showError(@nba_playoff_matchup.id, "Error: Please select winner and total games")
-    else
-      if @nba_playoff_matchup.save
-        # redirect to index.html w/ confirmation message
-        redirect_to '/nba_playoff_matchups', notice: 'NBA Winner Saved!'
-      else
-        # redirect to set winner page w/ error message
-        showError(@nba_playoff_matchup.id, "Error occurred while saving matchup")
+    foundError = false
+    if !@nba_playoff_matchup.hasWinner
+      showError(@nba_playoff_matchup.id, "Please select winner and total games")
+    elsif @nba_playoff_matchup.save
+      # TODO Update standings.
+
+      # if corresponding matchup also has winner, create new matchup in next round.
+      partner_position = @nba_playoff_matchup.position.odd? ?
+          (@nba_playoff_matchup.position + 1) : (@nba_playoff_matchup.position - 1)
+      partner_matchup = NbaPlayoffMatchup.where(year: @nba_playoff_matchup.year,
+                                                round: @nba_playoff_matchup.round, 
+                                                position: partner_position).first
+      if !partner_matchup.nil? && partner_matchup.hasWinner
+        next_position = (@nba_playoff_matchup.position + partner_matchup.position + 1) / 4
+        next_matchup = NbaPlayoffMatchup.where(year: @nba_playoff_matchup.year,
+                                               round: (@nba_playoff_matchup.round + 1),
+                                               position: next_position).first
+        if next_matchup.nil?
+          next_matchup = NbaPlayoffMatchup.new()
+          next_matchup.year = @nba_playoff_matchup.year
+          next_matchup.position = next_position
+          next_matchup.round = @nba_playoff_matchup.round + 1
+          if @nba_playoff_matchup.position.odd?
+            next_matchup.nba_team1_id = @nba_playoff_matchup.winning_nba_team_id
+            next_matchup.team1_seed = @nba_playoff_matchup.getWinningSeed
+            next_matchup.nba_team2_id = partner_matchup.winning_nba_team_id
+            next_matchup.team2_seed = partner_matchup.getWinningSeed
+          else
+            next_matchup.nba_team1_id = partner_matchup.winning_nba_team_id
+            next_matchup.team1_seed = partner_matchup.getWinningSeed
+            next_matchup.nba_team2_id = @nba_playoff_matchup.winning_nba_team_id
+            next_matchup.team2_seed = @nba_playoff_matchup.getWinningSeed
+          end
+
+          if !next_matchup.save
+            showError(@nba_playoff_matchup.id, "Problem occurred while saving next round matchup")
+            foundError = true;
+          end
+        end
       end
+      
+      # redirect to index.html w/ confirmation message
+      if !foundError
+        redirect_to '/nba_playoff_matchups', notice: 'NBA Winner Saved!'
+      end
+    else
+      # redirect to set winner page w/ error message
+      showError(@nba_playoff_matchup.id, "Problem occurred while saving matchup")
     end
-     # TODO If corresponding matchup also has winner, create new matchup.
-     # TODO Update standings.
   end
 
+  # shows the winner page of the matchup w/ the specified id, including the specified error
   def showError(id, error)
-    redirect_to '/nba_playoff_matchups/' + id.to_s + '/winner', notice: error
+    redirect_to '/nba_playoff_matchups/' + id.to_s + '/winner', notice: ("Error: " + error)
   end
 
   # DELETE /nba_playoff_matchups/1

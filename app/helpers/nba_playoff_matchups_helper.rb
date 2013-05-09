@@ -37,8 +37,8 @@ module NbaPlayoffMatchupsHelper
     tablerow =
        "<tr>
           <td>" + nba_playoff_matchup.position.to_s + "</td>
-          <td>" + nba_playoff_matchup.team1_seed.to_s + " - " + nba_playoff_matchup.nba_team1.abbreviation + "</td>
-          <td>" + nba_playoff_matchup.team2_seed.to_s + " - " + nba_playoff_matchup.nba_team2.abbreviation + "</td>
+          <td>" + (nba_playoff_matchup.nba_team1 != nil ? nba_playoff_matchup.team1_seed.to_s + " - " + nba_playoff_matchup.nba_team1.abbreviation : "--") + "</td>
+          <td>" + (nba_playoff_matchup.nba_team2 != nil ? nba_playoff_matchup.team2_seed.to_s + " - " + nba_playoff_matchup.nba_team2.abbreviation : "--") + "</td>
           <td>" + (nba_playoff_matchup.winning_nba_team != nil ? nba_playoff_matchup.winning_nba_team.abbreviation : "--") + "</td>
           <td>" + (nba_playoff_matchup.winning_nba_team != nil ? nba_playoff_matchup.total_games.to_s : "--") + "</td>
           <td>" + link_to('Show', nba_playoff_matchup) + "</td>
