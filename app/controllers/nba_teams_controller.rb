@@ -2,7 +2,7 @@ class NbaTeamsController < ApplicationController
   # GET /nba_teams
   # GET /nba_teams.json
   def index
-    @nba_teams = NbaTeam.order(:abbreviation).all
+    @nba_teams = NbaTeam.order(:league, :division, :abbreviation).all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -44,7 +44,7 @@ class NbaTeamsController < ApplicationController
 
     respond_to do |format|
       if @nba_team.save
-        format.html { redirect_to @nba_team, notice: 'Nba team was successfully created.' }
+        format.html { redirect_to '/nba_teams', notice: 'NBA team was successfully created.' }
         format.json { render json: @nba_team, status: :created, location: @nba_team }
       else
         format.html { render action: "new" }

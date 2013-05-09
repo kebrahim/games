@@ -1,6 +1,15 @@
-<h1>Editing nba_team</h1>
+
+<%= navigationBar(NavigationHelper::ADMIN_NBA_TEAMS_BUTTON) %>
+
+<div class='row-fluid'><div class='span12 center'>
+
+<%= showNoticeAsAlert(notice) %>
+
+<h3>Edit New NBA Team</h3>
 
 <%= render 'form' %>
 
 <%= link_to 'Show', @nba_team %> |
 <%= link_to 'Back', nba_teams_path %>
+<br/><br/>
+</div></div>

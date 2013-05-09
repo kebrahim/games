@@ -1,4 +1,9 @@
-<p id="notice"><%= notice %></p>
+
+<%= navigationBar(NavigationHelper::ADMIN_NBA_TEAMS_BUTTON) %>
+
+<div class='row-fluid'><div class='span12 center'>
+
+<%= showNoticeAsAlert(notice) %>
 
 <p>
   <b>City:</b>
@@ -28,3 +33,5 @@
 
 <%= link_to 'Edit', edit_nba_team_path(@nba_team) %> |
 <%= link_to 'Back', nba_teams_path %>
+
+</div></div>

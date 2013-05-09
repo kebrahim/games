@@ -14,9 +14,9 @@ class NbaPlayoffMatchup < ActiveRecord::Base
 
   # returns the seed of the winning team, or -1 if neither team IDs match.
   def getWinningSeed
-    if (self.nba_team1_id = self.winning_nba_team_id)
+    if (self.nba_team1_id == self.winning_nba_team_id)
       return self.team1_seed
-    elsif (self.nba_team2_id = self.winning_nba_team_id)
+    elsif (self.nba_team2_id == self.winning_nba_team_id)
       return self.team2_seed
     end
     return -1
