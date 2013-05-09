@@ -141,3 +141,7 @@ label {
     text-align: center;
     margin: auto;
 }
+
+.alert {
+  margin-top: 15px;
+}

@@ -1,0 +1,39 @@
+<%= navigationBar(NavigationHelper::ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON) %>
+
+<div class='row-fluid'><div class='span12 center'>
+
+  <%= showNoticeAsAlert(notice) %>
+
+  <h3>NBA Matchup Winner</h3>
+  <h4>Round <%= @nba_playoff_matchup.round %> : (<%= @nba_playoff_matchup.team1_seed.to_s + ") " +
+  @nba_playoff_matchup.nba_team1.abbreviation + " vs. (" + @nba_playoff_matchup.team2_seed.to_s + ") " + @nba_playoff_matchup.nba_team2.abbreviation %></h4>
+  <form action='/nba_playoff_matchups/<%= @nba_playoff_matchup.id %>/winner' method='post'>
+    <label for='winning_team_id'>Winner</label>
+    <select id='winning_team_id' name='winning_team_id'>
+      <option value=0>--</option>
+      <% @nba_teams.each do |nba_team| %>
+        <% if @nba_playoff_matchup.winning_nba_team_id == nba_team.id %>
+          <option selected value=<%= nba_team.id %>><%= nba_team.abbreviation %></option>
+        <% else %>
+          <option value=<%= nba_team.id %>><%= nba_team.abbreviation %></option>
+        <% end %>
+      <% end %>
+    </select>
+    <br/>
+    <label for='total_games'>Number of Games</label>
+    <select id='total_games' name='total_games'>
+      <option value=0>--</option>
+      <% for i in [4,5,6,7] %>
+        <% if @nba_playoff_matchup.total_games == i %>
+          <option selected value=<%= i %>><%= i %></option>
+        <% else %>
+          <option value=<%= i %>><%= i %></option>
+        <% end %>
+      <% end %>
+    </select>
+    <br/><br/>
+    <input type='submit' class='btn btn-primary' name='submit' value='Save Changes' />
+    <a href='/nba_playoff_matchups' class='btn'>Back to Matchups</a>
+    <input type='hidden' name='nba_team_id' value='<%= @nba_playoff_matchup.id %>' />
+  </form>
+</div></div>

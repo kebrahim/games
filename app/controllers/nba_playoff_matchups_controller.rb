@@ -88,6 +88,42 @@ class NbaPlayoffMatchupsController < ApplicationController
     end
   end
 
+  # GET /nba_playoff_matchups/1/winner
+  def setwinner
+    @nba_playoff_matchup = NbaPlayoffMatchup.find(params[:id])
+    @nba_teams = NbaTeam.where("id in (" + @nba_playoff_matchup.nba_team1_id.to_s + "," + 
+      @nba_playoff_matchup.nba_team2_id.to_s + ")")
+  end
+
+  # POST /nba_playoff_matchups/1/winner
+  def updatewinner
+    @nba_playoff_matchup = NbaPlayoffMatchup.find(params["nba_team_id"])
+    if (params["winning_team_id"] != @nba_playoff_matchup.winning_nba_team_id)
+      @nba_playoff_matchup.winning_nba_team_id = params["winning_team_id"].to_i      
+    end
+    if (params["total_games"] != @nba_playoff_matchup.total_games)
+      @nba_playoff_matchup.total_games = params["total_games"].to_i      
+    end
+
+    if @nba_playoff_matchup.winning_nba_team_id == 0 || @nba_playoff_matchup.total_games == 0
+      showError(@nba_playoff_matchup.id, "Error: Please select winner and total games")
+    else
+      if @nba_playoff_matchup.save
+        # redirect to index.html w/ confirmation message
+        redirect_to '/nba_playoff_matchups', notice: 'NBA Winner Saved!'
+      else
+        # redirect to set winner page w/ error message
+        showError(@nba_playoff_matchup.id, "Error occurred while saving matchup")
+      end
+    end
+     # TODO If corresponding matchup also has winner, create new matchup.
+     # TODO Update standings.
+  end
+
+  def showError(id, error)
+    redirect_to '/nba_playoff_matchups/' + id.to_s + '/winner', notice: error
+  end
+
   # DELETE /nba_playoff_matchups/1
   # DELETE /nba_playoff_matchups/1.json
   def destroy

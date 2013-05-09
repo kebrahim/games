@@ -2,7 +2,7 @@ module NbaPlayoffMatchupsHelper
   include ActionView::Helpers::TagHelper
   
   TABLE_CLASS = 'table table-striped table-bordered table-condensed center'
-  COL_NAMES = ['Position', 'Team', 'Team', 'Winner', 'Total games', '', '', '']
+  COL_NAMES = ['Position', 'Team', 'Team', 'Winner', 'Total games', '', '', '', '']
   
   # Returns the admin table of NBA playoff matchups for the specified year and round.
   def admin_round_table(year, round)
@@ -40,8 +40,9 @@ module NbaPlayoffMatchupsHelper
           <td>" + nba_playoff_matchup.team1_seed.to_s + " - " + nba_playoff_matchup.nba_team1.abbreviation + "</td>
           <td>" + nba_playoff_matchup.team2_seed.to_s + " - " + nba_playoff_matchup.nba_team2.abbreviation + "</td>
           <td>" + (nba_playoff_matchup.winning_nba_team != nil ? nba_playoff_matchup.winning_nba_team.abbreviation : "--") + "</td>
-          <td>" + (nba_playoff_matchup.winning_nba_team != nil ? nba_playoff_matchup.total_games : "--") + "</td>
+          <td>" + (nba_playoff_matchup.winning_nba_team != nil ? nba_playoff_matchup.total_games.to_s : "--") + "</td>
           <td>" + link_to('Show', nba_playoff_matchup) + "</td>
+          <td>" + link_to('Set Winner', 'nba_playoff_matchups/' + nba_playoff_matchup.id.to_s + '/winner') + "</td>
           <td>" + link_to('Edit', edit_nba_playoff_matchup_path(nba_playoff_matchup)) + "</td>
           <td>" + link_to('Destroy', nba_playoff_matchup, method: :delete, data: { confirm: 'Are you sure?' }) + "</td>
         </tr>"

@@ -4,6 +4,8 @@
 <div class='row-fluid'><div class='span12 center'>
 <h3>Manage <%= @currentYear %> NBA Playoffs</h3>
 
+<%= showNoticeAsAlert(notice) %>
+
 <%= admin_round_table(@currentYear, 1) %>
 <%= admin_round_table(@currentYear, 2) %>
 <%= admin_round_table(@currentYear, 3) %>
