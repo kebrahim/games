@@ -1,0 +1,41 @@
+<%= form_for(@nba_playoff_bet) do |f| %>
+  <% if @nba_playoff_bet.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@nba_playoff_bet.errors.count, "error") %> prohibited this nba_playoff_bet from being saved:</h2>
+
+      <ul>
+      <% @nba_playoff_bet.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :year %><br />
+    <%= f.number_field :year %>
+  </div>
+  <div class="field">
+    <%= f.label :user %><br />
+    <%= f.text_field :user %>
+  </div>
+  <div class="field">
+    <%= f.label :nba_playoff_matchup %><br />
+    <%= f.text_field :nba_playoff_matchup %>
+  </div>
+  <div class="field">
+    <%= f.label :expected_nba_team_id %><br />
+    <%= f.number_field :expected_nba_team_id %>
+  </div>
+  <div class="field">
+    <%= f.label :expected_total_games %><br />
+    <%= f.number_field :expected_total_games %>
+  </div>
+  <div class="field">
+    <%= f.label :points %><br />
+    <%= f.number_field :points %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

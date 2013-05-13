@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   def mygames
     # TODO get logged-in user
     @user = getLoggedInUser
+    @currentYear = Date.today.year
     if !@user.nil?
       @hasMLBWinBets = MlbWinBet.where(user_id: @user).count > 0
       # TODO show games user is currently playing; new table for users to sign up for games

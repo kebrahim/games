@@ -1,0 +1,33 @@
+<h1>Listing nba_playoff_bets</h1>
+
+<table>
+  <tr>
+    <th>Year</th>
+    <th>User</th>
+    <th>Nba playoff matchup</th>
+    <th>Expected nba team</th>
+    <th>Expected total games</th>
+    <th>Points</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @nba_playoff_bets.each do |nba_playoff_bet| %>
+  <tr>
+    <td><%= nba_playoff_bet.year %></td>
+    <td><%= nba_playoff_bet.user %></td>
+    <td><%= nba_playoff_bet.nba_playoff_matchup %></td>
+    <td><%= nba_playoff_bet.expected_nba_team_id %></td>
+    <td><%= nba_playoff_bet.expected_total_games %></td>
+    <td><%= nba_playoff_bet.points %></td>
+    <td><%= link_to 'Show', nba_playoff_bet %></td>
+    <td><%= link_to 'Edit', edit_nba_playoff_bet_path(nba_playoff_bet) %></td>
+    <td><%= link_to 'Destroy', nba_playoff_bet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Nba playoff bet', new_nba_playoff_bet_path %>

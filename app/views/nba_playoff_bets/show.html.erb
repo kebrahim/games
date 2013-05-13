@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Year:</b>
+  <%= @nba_playoff_bet.year %>
+</p>
+
+<p>
+  <b>User:</b>
+  <%= @nba_playoff_bet.user %>
+</p>
+
+<p>
+  <b>Nba playoff matchup:</b>
+  <%= @nba_playoff_bet.nba_playoff_matchup %>
+</p>
+
+<p>
+  <b>Expected nba team:</b>
+  <%= @nba_playoff_bet.expected_nba_team_id %>
+</p>
+
+<p>
+  <b>Expected total games:</b>
+  <%= @nba_playoff_bet.expected_total_games %>
+</p>
+
+<p>
+  <b>Points:</b>
+  <%= @nba_playoff_bet.points %>
+</p>
+
+
+<%= link_to 'Edit', edit_nba_playoff_bet_path(@nba_playoff_bet) %> |
+<%= link_to 'Back', nba_playoff_bets_path %>

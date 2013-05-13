@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  year: 1
+  user: 
+  nba_playoff_matchup: 
+  expected_nba_team_id: 1
+  expected_total_games: 1
+  points: 1
+
+two:
+  year: 1
+  user: 
+  nba_playoff_matchup: 
+  expected_nba_team_id: 1
+  expected_total_games: 1
+  points: 1
