@@ -2,11 +2,17 @@ class NbaPlayoffBetsController < ApplicationController
   # GET /nba_playoff_bets
   # GET /nba_playoff_bets.json
   def index
-    @nba_playoff_bets = NbaPlayoffBet.all
+    @user = current_user
+    if !@user.nil?
+      @currentYear = Date.today.year
+      @nba_playoff_bets = NbaPlayoffBet.all
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @nba_playoff_bets }
+      respond_to do |format|
+        format.html # index.html.erb
+        format.json { render json: @nba_playoff_bets }
+      end
+    else
+      redirect_to root_url
     end
   end
 
