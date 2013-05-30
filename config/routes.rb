@@ -2,6 +2,7 @@ Games::Application.routes.draw do
   resources :nba_playoff_bets
   get '/nbaPlayoffs' => 'nba_playoff_bets#allusers'
   get '/nbaPlayoffBets' => 'nba_playoff_bets#index'
+  post '/nba_playoff_bets_save' => 'nba_playoff_bets#bulksave'
 
   resources :nba_playoff_matchups
   get 'nba_playoff_matchups/:id/winner' => 'nba_playoff_matchups#setwinner'

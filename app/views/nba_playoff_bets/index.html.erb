@@ -1,8 +1,6 @@
 
 <%= navigationBar(NavigationHelper::NBA_PLAYOFFS_BUTTON) %>
 
-<form action='/mlb_win_bets_save' method='post'>
-
 <div class='row-fluid'>
   <div class='span2 center nexttoh1'>
     <a class='btn btn-inverse' href='nbaPlayoffs'>Standings</a>
@@ -15,9 +13,10 @@
   </div>
 </div>
 
-<form action='' method='post'>
+<form action='/nba_playoff_bets_save' method='post'>
 <div class='row-fluid'><div class='span12 center'>
   <br/>
+  <%= showNoticeAsAlert(notice) %>
   <div class='row-fluid'>
     <div class='span2 center tourney'>
       <%= matchupAtPosition(1, 1, "East Quarters") %>
@@ -95,5 +94,9 @@
       <%= matchupAtPosition(1, 8, "West Quarters") %>
     </div>
   </div>
+  <p>
+    <input type='submit' name='save' class='btn btn-primary' value='Save Changes' />&nbsp
+    <input type='submit' name='cancel' class='btn' value='Cancel' />
+  </p>
 </div></div>
 </form>

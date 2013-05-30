@@ -1,4 +1,6 @@
 class NbaPlayoffBetsController < ApplicationController
+  skip_before_filter :verify_authenticity_token
+
   # GET /nba_playoff_bets
   # GET /nba_playoff_bets.json
   def index
@@ -51,6 +53,65 @@ class NbaPlayoffBetsController < ApplicationController
   # GET /nba_playoff_bets/1/edit
   def edit
     @nba_playoff_bet = NbaPlayoffBet.find(params[:id])
+  end
+
+  # POST /nba_playoff_bets_save
+  def bulksave
+    logged_in_user = current_user
+    if logged_in_user.nil?
+      redirect_to root_url
+    else
+      current_year = Date.today.year
+
+      # iterate through round/position, checking if new or existing bet should be created/updated
+      1.upto(4) { |round|
+        maxPosition = 2 ** (4 - round)
+        1.upto(maxPosition) { |position|
+          betKey = "nba_" + round.to_s + "_" + position.to_s
+          if (!params[betKey].nil?)
+            # get existing bet from db
+            existingBet = NbaPlayoffBet.where(user_id: logged_in_user.id,
+                                              year: current_year,
+                                              round: round,
+                                              position: position).first
+            if (params[betKey] != "0")
+              # convert from selected value to team and number of games
+              team_games = params[betKey].split(":")
+              team_id = team_games[0].to_i
+              games = team_games[1].to_i
+  
+              if !existingBet.nil?
+                # if bet exists, update
+                if existingBet.expected_nba_team_id != team_id
+                  existingBet.update_attribute(:expected_nba_team_id, team_id)
+                end
+                if existingBet.expected_total_games != games
+                  existingBet.update_attribute(:expected_total_games, games)
+                end
+              else
+                # otherwise, create new bet
+                new_bet = NbaPlayoffBet.new
+                new_bet.user_id = logged_in_user.id
+                new_bet.year = current_year
+                new_bet.round = round
+                new_bet.position = position
+                new_bet.expected_nba_team_id = team_id
+                new_bet.expected_total_games = games
+                new_bet.points = 0
+                new_bet.save
+              end
+            elsif !existingBet.nil?
+              # existing bet exists & params is 0, so delete
+              existingBet.destroy
+            end
+          end
+        }
+      }
+      confirmationMessage = "NBA playoff picks updated!"
+
+      # redirect to index.html w/ confirmation message
+      redirect_to "/nbaPlayoffBets", notice: confirmationMessage
+    end
   end
 
   # POST /nba_playoff_bets

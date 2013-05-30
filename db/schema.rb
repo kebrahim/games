@@ -49,17 +49,18 @@ ActiveRecord::Schema.define(:version => 20130513223324) do
   create_table "nba_playoff_bets", :force => true do |t|
     t.integer  "year"
     t.integer  "user_id"
-    t.integer  "nba_playoff_matchup_id"
     t.integer  "expected_nba_team_id"
     t.integer  "expected_total_games"
     t.integer  "points"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+    t.integer  "round"
+    t.integer  "position"
   end
 
   add_index "nba_playoff_bets", ["expected_nba_team_id"], :name => "index_nba_playoff_bets_on_expected_nba_team_id"
-  add_index "nba_playoff_bets", ["nba_playoff_matchup_id"], :name => "index_nba_playoff_bets_on_nba_playoff_matchup_id"
   add_index "nba_playoff_bets", ["user_id"], :name => "index_nba_playoff_bets_on_user_id"
+  add_index "nba_playoff_bets", ["year", "round", "position"], :name => "index_nba_playoff_bets_on_year_and_round_and_position", :unique => true
 
   create_table "nba_playoff_matchups", :force => true do |t|
     t.integer  "year"
