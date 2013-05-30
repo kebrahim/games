@@ -15,9 +15,159 @@
 
 <div class='row-fluid'><div class='span12 center'>
   <h4>Standings</h4>
+  <!-- TODO show standings -->
 </div></div>
 
 <div class='row-fluid'><div class='span12 center'>
+  <% if !@betsEditable %>
+  
+  <!-- show NBA results -->
+  <h4>NBA Playoffs <%= @currentYear %></h4>
+  <div class='row-fluid'>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(1, 1, "East Quarters") %>
+    </div>
+    <div class='span2 offset8 center tourney'>
+      <%= matchupAtPosition(1, 5, "West Quarters") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 offset2 center tourney'>
+      <%= matchupAtPosition(2, 1, "East Semis") %>
+    </div>
+    <div class='span2 offset1 center tourney'>
+      <%= winnerAtMatchupPosition(4, 1, "NBA Champion") %>
+    </div>
+    <div class='span2 offset1 center tourney'>
+      <%= matchupAtPosition(2, 3, "West Semis") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(1, 2, "East Quarters") %>
+    </div>
+    <div class='span2 offset8 center tourney'>
+      <%= matchupAtPosition(1, 6, "West Quarters") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 offset4 center tourney'>
+      <%= matchupAtPosition(3, 1, "East Finals") %>
+    </div>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(3, 2, "West Finals") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(1, 3, "East Quarters") %>
+    </div>
+    <div class='span2 offset8 center tourney'>
+      <%= matchupAtPosition(1, 7, "West Quarters") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 offset2 center tourney'>
+      <%= matchupAtPosition(2, 2, "East Semis") %>
+    </div>
+    <div class='span2 offset1 center tourney'>
+      <%= matchupAtPosition(4, 1, "NBA Finals") %>
+    </div>
+    <div class='span2 offset1 center tourney'>
+      <%= matchupAtPosition(2, 4, "West Semis") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(1, 4, "East Quarters") %>
+    </div>
+    <div class='span2 offset8 center tourney'>
+      <%= matchupAtPosition(1, 8, "West Quarters") %>
+    </div>
+  </div>
+
+  <% else %>
+  
   <h4>My Picks</h4>
-  <a class='btn btn-primary' href='nbaPlayoffBets'>Change My Picks</a><br/><br/>
+  <a class='btn btn-primary' href='nbaPlayoffBets'>Change My Picks</a>
+  <div class='row-fluid'>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(1, 1, "East Quarters") %>
+    </div>
+    <div class='span2 offset8 center tourney'>
+      <%= matchupAtPosition(1, 5, "West Quarters") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 offset2 center tourney'>
+      <strong>East Semis</strong><br/>
+      <%= readOnlyBetAtRoundPosition(1, 1) %><br/>
+      <%= readOnlyBetAtRoundPosition(1, 2) %>
+    </div>
+    <div class='span2 offset1 center tourney'>
+      <strong>NBA Champion</strong><br/>
+      <%= readOnlyBetAtRoundPosition(4, 1) %>
+    </div>
+    <div class='span2 offset1 center tourney'>
+      <strong>West Semis</strong><br/>
+      <%= readOnlyBetAtRoundPosition(1, 5) %><br/>
+      <%= readOnlyBetAtRoundPosition(1, 6) %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(1, 2, "East Quarters") %>
+    </div>
+    <div class='span2 offset8 center tourney'>
+      <%= matchupAtPosition(1, 6, "West Quarters") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 offset4 center tourney'>
+      <strong>East Finals</strong><br/>
+      <%= readOnlyBetAtRoundPosition(2, 1) %><br/>
+      <%= readOnlyBetAtRoundPosition(2, 2) %><br/>
+    </div>
+    <div class='span2 center tourney'>
+      <strong>West Finals</strong><br/>
+      <%= readOnlyBetAtRoundPosition(2, 3) %><br/>
+      <%= readOnlyBetAtRoundPosition(2, 4) %><br/>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(1, 3, "East Quarters") %>
+    </div>
+    <div class='span2 offset8 center tourney'>
+      <%= matchupAtPosition(1, 7, "West Quarters") %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 offset2 center tourney'>
+      <strong>East Semis</strong><br/>
+      <%= readOnlyBetAtRoundPosition(1, 3) %><br/>
+      <%= readOnlyBetAtRoundPosition(1, 4) %>
+    </div>
+    <div class='span2 offset1 center tourney'>
+      <strong>NBA Finals</strong><br/>
+      <%= readOnlyBetAtRoundPosition(3, 1) %><br/>
+      <%= readOnlyBetAtRoundPosition(3, 2) %>
+    </div>
+    <div class='span2 offset1 center tourney'>
+      <strong>West Semis</strong><br/>
+      <%= readOnlyBetAtRoundPosition(1, 7) %><br/>
+      <%= readOnlyBetAtRoundPosition(1, 8) %>
+    </div>
+  </div>
+  <div class='row-fluid'>
+    <div class='span2 center tourney'>
+      <%= matchupAtPosition(1, 4, "East Quarters") %>
+    </div>
+    <div class='span2 offset8 center tourney'>
+      <%= matchupAtPosition(1, 8, "West Quarters") %>
+    </div>
+  </div>
+
+  <% end %>
+
 </div></div>

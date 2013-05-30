@@ -4,19 +4,35 @@ module NbaPlayoffBetsHelper
   def matchupAtPosition(round, position, title)
     matchup = NbaPlayoffMatchup.where(year: @currentYear, round: round, position: position)
                                .first
-    # TODO check result and indicate if user was correct
-    matchupRow = "<strong>" + title + "</strong><br/>" + 
-                 matchup.team1_seed.to_s + ". " + matchup.nba_team1.city + "<br/>" +
-                 matchup.team2_seed.to_s + ". " + matchup.nba_team2.city
+    
+    if matchup.nil?
+      matchupRow = "<strong>" + title + "</strong><br/>"
+    else
+      matchupRow = "<strong>" + title + "</strong><br/>" + 
+          matchup.team1_seed.to_s + ". " + matchup.nba_team1.city + "<br/>" +
+          matchup.team2_seed.to_s + ". " + matchup.nba_team2.city
+    end
     return matchupRow.html_safe
+  end
+
+  # Returns the winner of the matchup at the specified position
+  def winnerAtMatchupPosition(round, position, title)
+    matchup = NbaPlayoffMatchup.where(year: @currentYear, round: round, position: position)
+                               .first
+    if matchup.nil?
+      matchupRow = "<strong>" + title + "</strong><br/>"
+    else
+      matchupRow = "<strong>" + title + "</strong><br/>" +
+          matchup.winning_nba_team.city + " " + matchup.winning_nba_team.name + "<br/> (" + 
+          matchup.total_games.to_s + " games)"
+    end
+    return matchupRow.html_safe    
   end
 
   # Returns the select tag with team and number of games for the specified round & position.
   def selectAtRoundPosition(round, position)
   	matchup = NbaPlayoffMatchup.where(year: @currentYear, round: round, position: position)
                                .first
-
-    # TODO matchup will be used to mark whether user was correct
 
     betForMatchup = NbaPlayoffBet.where(user_id: current_user.id,
                                         year: @currentYear,
@@ -25,8 +41,7 @@ module NbaPlayoffBetsHelper
     
     if round == 1
       # use matchup to generate select tag
-      return generateSelect(round, position, matchup.team1_seed, matchup.nba_team1,
-          matchup.team2_seed, matchup.nba_team2, betForMatchup)
+      return generateSelect(round, position, matchup.nba_team1, matchup.nba_team2, betForMatchup)
     else
       # get bets from previous round
       positions = [((position * 2) - 1), (position * 2)]
@@ -38,10 +53,8 @@ module NbaPlayoffBetsHelper
       
       if prevRoundBets.size == 2
         # 2 bets in previous round indicates this select can be shown
-        # TODO figure out seed
-        return generateSelect(round, position,
-        	1, prevRoundBets[0].expected_nba_team,
-        	2, prevRoundBets[1].expected_nba_team, betForMatchup)
+        return generateSelect(round, position, prevRoundBets[0].expected_nba_team,
+        	  prevRoundBets[1].expected_nba_team, betForMatchup)
       end
       
       # previous round bets aren't complete yet; show nothing.
@@ -51,7 +64,7 @@ module NbaPlayoffBetsHelper
 
   # Returns a select tag for the specified round/team/teams, marking the selected value according to
   # the existing bet.
-  def generateSelect(round, position, team1_seed, nba_team1, team2_seed, nba_team2, existingBet)
+  def generateSelect(round, position, nba_team1, nba_team2, existingBet)
     selectTag = "<select name='nba_" + round.to_s + "_" + position.to_s + "' class='input-tourney'>
                    <option value='0'"
     if existingBet.nil?
@@ -64,7 +77,7 @@ module NbaPlayoffBetsHelper
           (existingBet.expected_total_games == games))
         selectTag += " selected"
       end
-      selectTag += ">" + team1_seed.to_s + ". " + nba_team1.city + " in " + games.to_s + "</option>"
+      selectTag += ">" + nba_team1.abbreviation + " in " + games.to_s + "</option>"
     }
     4.upto(7) { |games|
       selectTag += "<option value='" + nba_team2.id.to_s + ":" + games.to_s + "'"
@@ -72,11 +85,29 @@ module NbaPlayoffBetsHelper
           (existingBet.expected_total_games == games))
         selectTag += " selected"
       end
-      selectTag += ">" + team2_seed.to_s + ". " + nba_team2.city + " in " + games.to_s + "</option>"
+      selectTag += ">" + nba_team2.abbreviation + " in " + games.to_s + "</option>"
     }
     selectTag += "</select>"
     return selectTag.html_safe
   end
 
-  # TODO show in read-only mode after playoffs begin
+  # Returns a string with the expected team and number of games for the logged-in user, during the
+  # current year, for the specified round & position.
+  def readOnlyBetAtRoundPosition(round, position)
+    betForMatchup = NbaPlayoffBet.where(user_id: current_user.id,
+                                        year: @currentYear,
+                                        round: round,
+                                        position: position).first
+    
+    if !betForMatchup.nil?
+      # TODO matchup will be used to mark whether user was correct
+      matchup = NbaPlayoffMatchup.where(year: @currentYear, round: round, position: position)
+                                 .first
+      return (betForMatchup.expected_nba_team.abbreviation + " in " + 
+          betForMatchup.expected_total_games.to_s).html_safe
+    else      
+      # no bet yet; show nothing
+      return ""
+    end
+  end
 end

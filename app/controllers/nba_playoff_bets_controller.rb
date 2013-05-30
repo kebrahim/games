@@ -23,6 +23,8 @@ class NbaPlayoffBetsController < ApplicationController
     @user = current_user
     if !@user.nil?
       @currentYear = Date.today.year
+      # TODO betsEditable depends on schedule
+      @betsEditable = false
     else
       redirect_to root_url
     end
@@ -60,7 +62,7 @@ class NbaPlayoffBetsController < ApplicationController
     logged_in_user = current_user
     if logged_in_user.nil?
       redirect_to root_url
-    else
+    elsif params["cancel"].nil?
       current_year = Date.today.year
 
       # iterate through round/position, checking if new or existing bet should be created/updated
@@ -107,10 +109,13 @@ class NbaPlayoffBetsController < ApplicationController
           end
         }
       }
-      confirmationMessage = "NBA playoff picks updated!"
 
       # redirect to index.html w/ confirmation message
+      confirmationMessage = "NBA playoff picks updated!"
       redirect_to "/nbaPlayoffBets", notice: confirmationMessage
+    else
+      # Cancel resets page.
+      redirect_to "/nbaPlayoffBets"
     end
   end
 
