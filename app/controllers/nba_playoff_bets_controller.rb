@@ -24,10 +24,40 @@ class NbaPlayoffBetsController < ApplicationController
     if !@user.nil?
       @currentYear = Date.today.year
       # TODO betsEditable depends on schedule
-      @betsEditable = false
+      @betsEditable = true
+
+      # Get all users which have made NBA Playoff picks, ordered by score DESC
+      @usersToPoints = NbaPlayoffBet.where(year: @currentYear)
+                                    .group(:user_id)
+                                    .sum(:points)
+      @userMap = buildUserMap(@currentYear)
+      @finalsPicksMap = buildFinalsPicksMap(@currentYear)
     else
       redirect_to root_url
     end
+  end
+
+  # Returns a map of user id to NBA Playoff user
+  def buildUserMap(currentYear)
+    nbaPlayoffUsers = NbaPlayoffBet.includes(:user)
+                                   .where(year: currentYear)
+                                   .select("DISTINCT user_id")
+    userMap = {}
+    nbaPlayoffUsers.each do |nbaPlayoffUser|
+      userMap[nbaPlayoffUser.user.id] = nbaPlayoffUser.user
+    end
+    return userMap
+  end
+
+  # Returns a map of user id to NBA Playoff finals pick
+  def buildFinalsPicksMap(currentYear)
+    finalsBets = NbaPlayoffBet.where(year: currentYear)
+                              .where(round: 4)
+    finalsPicksMap = {}
+    finalsBets.each do |finalsBet|
+      finalsPicksMap[finalsBet.user_id] = finalsBet
+    end
+    return finalsPicksMap
   end
 
   # GET /nba_playoff_bets/1
