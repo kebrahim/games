@@ -1,4 +1,6 @@
 class NbaPlayoffMatchupsController < ApplicationController
+  skip_before_filter :verify_authenticity_token
+
   # GET /nba_playoff_matchups
   # GET /nba_playoff_matchups.json
   def index
@@ -91,13 +93,23 @@ class NbaPlayoffMatchupsController < ApplicationController
   # GET /nba_playoff_matchups/1/winner
   def setwinner
     @nba_playoff_matchup = NbaPlayoffMatchup.find(params[:id])
-    @nba_teams = NbaTeam.where("id in (" + @nba_playoff_matchup.nba_team1_id.to_s + "," + 
-      @nba_playoff_matchup.nba_team2_id.to_s + ")")
+    team_ids = [@nba_playoff_matchup.nba_team1_id, @nba_playoff_matchup.nba_team2_id]
+    @nba_teams = NbaTeam.where("id in (?)", team_ids)
+  end
+
+  # returns a map of scoring round to points
+  def buildScoringRoundToPointsMap
+    scoringMap = {}
+    allScores = NbaPlayoffScore.all
+    allScores.each do |score|
+      scoringMap[score.round] = score.points
+    end
+    return scoringMap
   end
 
   # POST /nba_playoff_matchups/1/winner
   def updatewinner
-    @nba_playoff_matchup = NbaPlayoffMatchup.find(params["nba_team_id"])
+    @nba_playoff_matchup = NbaPlayoffMatchup.find(params["nba_matchup_id"])
     if (params["winning_team_id"] != @nba_playoff_matchup.winning_nba_team_id)
       @nba_playoff_matchup.winning_nba_team_id = params["winning_team_id"].to_i      
     end
@@ -109,7 +121,23 @@ class NbaPlayoffMatchupsController < ApplicationController
     if !@nba_playoff_matchup.hasWinner
       showError(@nba_playoff_matchup.id, "Please select winner and total games")
     elsif @nba_playoff_matchup.save
-      # TODO Update standings.
+      # Update standings.
+      nbaBets = NbaPlayoffBet.where(year: @nba_playoff_matchup.year)
+                             .where(round: @nba_playoff_matchup.round)
+                             .where(position: @nba_playoff_matchup.position)
+      roundToPointsMap = buildScoringRoundToPointsMap
+      nbaBets.each do |nbaBet|
+        # bet is only correct if team matches
+        if nbaBet.expected_nba_team_id == @nba_playoff_matchup.winning_nba_team_id
+          totalPoints = roundToPointsMap[@nba_playoff_matchup.round]
+          # if total games prediction is correct, add bonus
+          if nbaBet.expected_total_games == @nba_playoff_matchup.total_games
+            totalPoints += roundToPointsMap[NbaPlayoffScore::BONUS_GAMES_ROUND]
+          end
+          # update points attribute of bet
+          nbaBet.update_attribute(:points, totalPoints)
+        end
+      end
 
       # if corresponding matchup also has winner, create new matchup in next round.
       partner_position = @nba_playoff_matchup.position.odd? ?

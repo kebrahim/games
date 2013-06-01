@@ -1,0 +1,29 @@
+<%= form_for(@nba_playoff_score) do |f| %>
+  <% if @nba_playoff_score.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@nba_playoff_score.errors.count, "error") %> prohibited this nba_playoff_score from being saved:</h2>
+
+      <ul>
+      <% @nba_playoff_score.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :round %><br />
+    <%= f.number_field :round %>
+  </div>
+  <div class="field">
+    <%= f.label :points %><br />
+    <%= f.number_field :points %>
+  </div>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

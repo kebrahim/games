@@ -24,14 +24,16 @@ class NbaPlayoffBetsController < ApplicationController
     if !@user.nil?
       @currentYear = Date.today.year
       # TODO betsEditable depends on schedule
-      @betsEditable = true
+      @betsEditable = false
 
       # Get all users which have made NBA Playoff picks, ordered by score DESC
-      @usersToPoints = NbaPlayoffBet.where(year: @currentYear)
-                                    .group(:user_id)
-                                    .sum(:points)
+      @usersToPoints = NbaPlayoffBet.sum(:points,
+                                         group: 'user_id',
+                                         conditions: 'year = ' + @currentYear.to_s,
+                                         order: 'sum(points) DESC')
       @userMap = buildUserMap(@currentYear)
       @finalsPicksMap = buildFinalsPicksMap(@currentYear)
+      @scoreMap = NbaPlayoffScore.order(:round)
     else
       redirect_to root_url
     end
