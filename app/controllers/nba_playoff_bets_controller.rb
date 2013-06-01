@@ -62,12 +62,14 @@ class NbaPlayoffBetsController < ApplicationController
 
   # GET /nba_playoff_bets/1
   # GET /nba_playoff_bets/1.json
+  # Shows all NBA playoff bets for user id
   def show
-    @nba_playoff_bet = NbaPlayoffBet.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @nba_playoff_bet }
+    @current_user = current_user
+    if !@current_user.nil?
+      @user = User.find(params[:id])
+      @currentYear = Date.today.year
+    else
+      redirect_to root_url
     end
   end
 

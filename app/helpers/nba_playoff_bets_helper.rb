@@ -94,7 +94,13 @@ module NbaPlayoffBetsHelper
   # Returns a string with the expected team and number of games for the logged-in user, during the
   # current year, for the specified round & position.
   def readOnlyBetAtRoundPosition(round, position)
-    betForMatchup = NbaPlayoffBet.where(user_id: current_user.id,
+    return readOnlyBetAtRoundPositionForUser(round, position, current_user)
+  end
+
+  # Returns a string with the expected team and number of games for the specified user, during the
+  # current year, for the specified round & position.
+  def readOnlyBetAtRoundPositionForUser(round, position, user)
+    betForMatchup = NbaPlayoffBet.where(user_id: user.id,
                                         year: @currentYear,
                                         round: round,
                                         position: position).first

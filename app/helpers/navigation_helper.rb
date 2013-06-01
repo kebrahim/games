@@ -18,9 +18,15 @@ module NavigationHelper
 
   ADMIN_THRESHOLD = ADMIN_MLB_TEAMS_BUTTON
 
-  # Returns the navigation bar HTML w/ the specified button selected
-  # TODO pull list of games from db
+  # Returns the navigation bar for a page at the top level.
   def navigationBar(button)
+    return navigationBarAtLevel(button, true)
+  end
+
+  # Returns the navigation bar HTML w/ the specified button selected; isTopLevel==false implies that
+  # page is not at top level and all links should back up a level.
+  # TODO pull list of games from db
+  def navigationBarAtLevel(button, isTopLevel)
     navbar = "<div class='navbar'><div class='navbar-inner'>"
     if current_user
       navbar << "
@@ -31,7 +37,7 @@ module NavigationHelper
       if (button == MY_GAMES_BUTTON)
         navbar << " class='active'"
       end
-      navbar << "><a href='myGames'>My Games</a></li>
+      navbar << "><a href='" + (isTopLevel ? "" : "../") + "myGames'>My Games</a></li>
             <li class='divider-vertical'></li>
        	    <li class='dropdown"
       if (isMlbButton(button))
@@ -47,7 +53,7 @@ module NavigationHelper
         navbar << " class='active'"
       end
       navbar <<    ">
-                  <a href='mlbOverUnders'>Over/Unders</a>
+                  <a href='" + (isTopLevel ? "" : "../") + "mlbOverUnders'>Over/Unders</a>
                 </li>
               </ul>
             </li>
@@ -66,7 +72,7 @@ module NavigationHelper
         navbar << " class='active'"
       end
       navbar <<    ">
-                  <a href='nbaPlayoffs'>Playoffs</a>
+                  <a href='" + (isTopLevel ? "" : "../") + "nbaPlayoffs'>Playoffs</a>
                 </li>
               </ul>
             </li>
@@ -97,14 +103,14 @@ module NavigationHelper
           navbar << " class='active'"
         end
         navbar <<    ">
-                  <a href='mlb_teams'>MLB Teams</a>
+                  <a href='" + (isTopLevel ? "" : "../") + "mlb_teams'>MLB Teams</a>
                 </li>
                 <li"
         if (button == ADMIN_MLB_WINS_BUTTON)
           navbar << " class='active'"
         end
         navbar <<    ">
-                  <a href='mlb_wins'>MLB Over/Unders</a>
+                  <a href='" + (isTopLevel ? "" : "../") + "mlb_wins'>MLB Over/Unders</a>
                 </li>
                 <li class='divider'></li>
                 <li"
@@ -112,14 +118,14 @@ module NavigationHelper
           navbar << " class='active'"
         end
         navbar <<    ">
-                  <a href='nba_teams'>NBA Teams</a>
+                  <a href='" + (isTopLevel ? "" : "../") + "nba_teams'>NBA Teams</a>
                 </li>
                 <li"
         if (button == ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON)
           navbar << " class='active'"
         end
         navbar <<    ">
-                  <a href='nba_playoff_matchups'>NBA Playoffs</a>
+                  <a href='" + (isTopLevel ? "" : "../") + "nba_playoff_matchups'>NBA Playoffs</a>
                 </li>
               </ul>
             </li>"
@@ -142,10 +148,10 @@ module NavigationHelper
         navbar << " class='active'"
       end
   	  navbar <<    ">
-                  <a href='editProfile'><i class='icon-edit'></i>&nbsp&nbspEdit profile</a>
+                  <a href='" + (isTopLevel ? "" : "../") + "editProfile'><i class='icon-edit'></i>&nbsp&nbspEdit profile</a>
                 </li>
   	            <li class='divider'></li>
-  	            <li><a href='logout'><i class='icon-eject'></i>&nbsp&nbspSign out</a></li>
+  	            <li><a href='" + (isTopLevel ? "" : "../") + "logout'><i class='icon-eject'></i>&nbsp&nbspSign out</a></li>
   	          </ul>
   	        </li>
   	      </ul>"

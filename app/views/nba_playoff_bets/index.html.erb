@@ -6,7 +6,7 @@
     <a class='btn btn-inverse' href='nbaPlayoffs'>Standings</a>
   </div>
   <div class='span8 center'>
-    <h3><%= @user.first_name %>'s <%= @currentYear %> NBA Playoff Picks</h3>
+    <h3>NBA Playoffs <%= @currentYear %></h3>
   </div>
   <div class='span2 center nexttoh1'>
     <img class='img_50_49' src='assets/nba.jpg' />
@@ -15,7 +15,7 @@
 
 <form action='/nba_playoff_bets_save' method='post'>
 <div class='row-fluid'><div class='span12 center'>
-  <br/>
+  <h4>Edit My Picks</h4>
   <%= showNoticeAsAlert(notice) %>
   <div class='row-fluid'>
     <div class='span2 center tourney'>
