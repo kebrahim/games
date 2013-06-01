@@ -24,10 +24,13 @@
       </tr></thead>
       <% @usersToPoints.keys.each do |userId| %>
         <tr>
-          <!-- TODO name should link to page with team's picks -->
           <td><%= link_to(@userMap[userId].fullName, "/nba_playoff_bets/" + userId.to_s) %></td>
+          <% if !@finalsPicksMap[userId].nil? %>
           <td><%= @finalsPicksMap[userId].expected_nba_team.city + " in " + 
                   @finalsPicksMap[userId].expected_total_games.to_s %></td>
+          <% else %>
+          <td>--</td>
+          <% end %>
           <td><%= @usersToPoints[userId] %></td>
         </tr>
       <% end %>

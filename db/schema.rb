@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130513223324) do
+ActiveRecord::Schema.define(:version => 20130530000000) do
 
   create_table "mlb_teams", :force => true do |t|
     t.string   "city"
@@ -60,7 +60,7 @@ ActiveRecord::Schema.define(:version => 20130513223324) do
 
   add_index "nba_playoff_bets", ["expected_nba_team_id"], :name => "index_nba_playoff_bets_on_expected_nba_team_id"
   add_index "nba_playoff_bets", ["user_id"], :name => "index_nba_playoff_bets_on_user_id"
-  add_index "nba_playoff_bets", ["year", "round", "position"], :name => "index_nba_playoff_bets_on_year_and_round_and_position", :unique => true
+  add_index "nba_playoff_bets", ["year", "round", "position", "user_id"], :name => "nba_playoff_bets_year_round_position_user", :unique => true
 
   create_table "nba_playoff_matchups", :force => true do |t|
     t.integer  "year"
