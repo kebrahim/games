@@ -6,6 +6,27 @@
 
 <%= showNoticeAsAlert(notice) %>
 
+<h4>Manage Scoring Formula</h4>
+<table class='table table-striped table-bordered table-condensed center'>
+  <thead><tr>
+    <th>Round</th>
+    <th>Points</th>
+    <th>Name</th>
+    <th></th>
+    <th></th>
+  </tr></thead>
+
+<% @nba_playoff_scores.each do |nba_playoff_score| %>
+  <tr>
+    <td><%= nba_playoff_score.round %></td>
+    <td><%= nba_playoff_score.points %></td>
+    <td><%= nba_playoff_score.name %></td>
+    <td><%= link_to 'Edit', edit_nba_playoff_score_path(nba_playoff_score) %></td>
+    <td><%= link_to 'Destroy', nba_playoff_score, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
 <%= admin_round_table(@currentYear, 1) %>
 <%= admin_round_table(@currentYear, 2) %>
 <%= admin_round_table(@currentYear, 3) %>

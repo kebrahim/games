@@ -1,6 +1,11 @@
-<h1>Editing nba_playoff_score</h1>
+<%= navigationBar(NavigationHelper::ADMIN_NBA_PLAYOFF_MATCHUPS_BUTTON) %>
 
-<%= render 'form' %>
+<div class='row-fluid'><div class='span12 center'>
 
-<%= link_to 'Show', @nba_playoff_score %> |
-<%= link_to 'Back', nba_playoff_scores_path %>
+  <h3>Edit Playoff Scoring Formula</h3>
+
+  <%= render 'form' %>
+
+  <%= link_to 'Back', '/nba_playoff_matchups' %>
+
+</div></div>

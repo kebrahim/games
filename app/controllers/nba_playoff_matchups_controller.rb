@@ -5,6 +5,7 @@ class NbaPlayoffMatchupsController < ApplicationController
   # GET /nba_playoff_matchups.json
   def index
     @currentYear = Date.today.year
+    @nba_playoff_scores = NbaPlayoffScore.order(:round)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -139,6 +140,7 @@ class NbaPlayoffMatchupsController < ApplicationController
         end
       end
 
+      # TODO create matchup after first team wins; update matchup if 2nd team wins
       # if corresponding matchup also has winner, create new matchup in next round.
       partner_position = @nba_playoff_matchup.position.odd? ?
           (@nba_playoff_matchup.position + 1) : (@nba_playoff_matchup.position - 1)

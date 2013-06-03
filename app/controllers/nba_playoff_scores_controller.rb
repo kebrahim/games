@@ -34,6 +34,7 @@ class NbaPlayoffScoresController < ApplicationController
 
   # GET /nba_playoff_scores/1/edit
   def edit
+    # TODO confirm logged-in user is admin
     @nba_playoff_score = NbaPlayoffScore.find(params[:id])
   end
 
@@ -56,11 +57,13 @@ class NbaPlayoffScoresController < ApplicationController
   # PUT /nba_playoff_scores/1
   # PUT /nba_playoff_scores/1.json
   def update
+    # TODO confirm logged-in user is admin
     @nba_playoff_score = NbaPlayoffScore.find(params[:id])
 
     respond_to do |format|
       if @nba_playoff_score.update_attributes(params[:nba_playoff_score])
-        format.html { redirect_to @nba_playoff_score, notice: 'Nba playoff score was successfully updated.' }
+        format.html { redirect_to '/nba_playoff_matchups',
+                      notice: 'NBA playoff scoring formula updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -72,11 +75,13 @@ class NbaPlayoffScoresController < ApplicationController
   # DELETE /nba_playoff_scores/1
   # DELETE /nba_playoff_scores/1.json
   def destroy
+    # TODO confirm logged-in user is admin
     @nba_playoff_score = NbaPlayoffScore.find(params[:id])
     @nba_playoff_score.destroy
 
     respond_to do |format|
-      format.html { redirect_to nba_playoff_scores_url }
+      format.html { redirect_to '/nba_playoff_matchups',
+                    notice: 'NBA playoff scoring formula destroyed.' }
       format.json { head :no_content }
     end
   end
