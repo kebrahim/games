@@ -4,6 +4,7 @@ class NbaPlayoffMatchupsController < ApplicationController
   # GET /nba_playoff_matchups
   # GET /nba_playoff_matchups.json
   def index
+    # TODO confirm logged-in user is admin
     @currentYear = Date.today.year
     @nba_playoff_scores = NbaPlayoffScore.order(:round)
 
@@ -76,12 +77,10 @@ class NbaPlayoffMatchupsController < ApplicationController
     @nba_playoff_matchup.nba_team1_id = params[:nba_team1_id]
     @nba_playoff_matchup.nba_team2_id = params[:nba_team2_id]
 
-    # TODO winning_team, num_games should be updated in separate method, which updates score & adds
-    # new matchups
-
     respond_to do |format|
       if @nba_playoff_matchup.update_attributes(params[:nba_playoff_matchup])
-        format.html { redirect_to @nba_playoff_matchup, notice: 'Nba playoff matchup was successfully updated.' }
+        format.html { redirect_to @nba_playoff_matchup, 
+                      notice: 'NBA playoff matchup was successfully updated.' }
         format.json { head :no_content }
       else
         @nba_teams = getNbaTeams()
@@ -93,6 +92,7 @@ class NbaPlayoffMatchupsController < ApplicationController
 
   # GET /nba_playoff_matchups/1/winner
   def setwinner
+    # TODO confirm logged-in user is admin
     @nba_playoff_matchup = NbaPlayoffMatchup.find(params[:id])
     team_ids = [@nba_playoff_matchup.nba_team1_id, @nba_playoff_matchup.nba_team2_id]
     @nba_teams = NbaTeam.where("id in (?)", team_ids)
@@ -110,6 +110,7 @@ class NbaPlayoffMatchupsController < ApplicationController
 
   # POST /nba_playoff_matchups/1/winner
   def updatewinner
+    # TODO confirm logged-in user is admin
     @nba_playoff_matchup = NbaPlayoffMatchup.find(params["nba_matchup_id"])
     if (params["winning_team_id"] != @nba_playoff_matchup.winning_nba_team_id)
       @nba_playoff_matchup.winning_nba_team_id = params["winning_team_id"].to_i      
@@ -140,40 +141,47 @@ class NbaPlayoffMatchupsController < ApplicationController
         end
       end
 
-      # TODO create matchup after first team wins; update matchup if 2nd team wins
-      # if corresponding matchup also has winner, create new matchup in next round.
+      # Create new matchup after first team wins; update existing matchup if 2nd team wins
       partner_position = @nba_playoff_matchup.position.odd? ?
           (@nba_playoff_matchup.position + 1) : (@nba_playoff_matchup.position - 1)
       partner_matchup = NbaPlayoffMatchup.where(year: @nba_playoff_matchup.year,
                                                 round: @nba_playoff_matchup.round, 
                                                 position: partner_position).first
-      if !partner_matchup.nil? && partner_matchup.hasWinner
+      if !partner_matchup.nil? 
         next_position = (@nba_playoff_matchup.position + partner_matchup.position + 1) / 4
         next_matchup = NbaPlayoffMatchup.where(year: @nba_playoff_matchup.year,
                                                round: (@nba_playoff_matchup.round + 1),
                                                position: next_position).first
-        if next_matchup.nil?
-          next_matchup = NbaPlayoffMatchup.new()
-          next_matchup.year = @nba_playoff_matchup.year
-          next_matchup.position = next_position
-          next_matchup.round = @nba_playoff_matchup.round + 1
-          if @nba_playoff_matchup.position.odd?
-            next_matchup.nba_team1_id = @nba_playoff_matchup.winning_nba_team_id
-            next_matchup.team1_seed = @nba_playoff_matchup.getWinningSeed
-            next_matchup.nba_team2_id = partner_matchup.winning_nba_team_id
-            next_matchup.team2_seed = partner_matchup.getWinningSeed
-          else
-            next_matchup.nba_team1_id = partner_matchup.winning_nba_team_id
-            next_matchup.team1_seed = partner_matchup.getWinningSeed
-            next_matchup.nba_team2_id = @nba_playoff_matchup.winning_nba_team_id
-            next_matchup.team2_seed = @nba_playoff_matchup.getWinningSeed
+        if !partner_matchup.hasWinner
+          # only this matchup has been decided, create/update next_matchup
+          if next_matchup.nil?
+            # next round matchup doesn't exist; create it
+            next_matchup = NbaPlayoffMatchup.new()
+            next_matchup.year = @nba_playoff_matchup.year
+            next_matchup.position = next_position
+            next_matchup.round = @nba_playoff_matchup.round + 1
           end
 
+          updateNextRoundMatchupTeamAndSeed(next_matchup, @nba_playoff_matchup)
           if !next_matchup.save
             showError(@nba_playoff_matchup.id, "Problem occurred while saving next round matchup")
             foundError = true;
           end
+        elsif !next_matchup.nil?
+          # both matchups have been decided; update next_matchup
+          updateNextRoundMatchupTeamAndSeed(next_matchup, @nba_playoff_matchup)
+          if !next_matchup.save
+            showError(@nba_playoff_matchup.id, "Problem occurred while saving next round matchup")
+            foundError = true;
+          end
+        else
+          showError(@nba_playoff_matchup.id, "Missing next round matchup to save")
+          foundError = true;
         end
+      elsif @nba_playoff_matchup.round != 4
+        # A partner matchup should exist, except for the final round.
+        showError(@nba_playoff_matchup.id, "Missing partner matchup")
+        foundError = true;
       end
       
       # redirect to index.html w/ confirmation message
@@ -183,6 +191,18 @@ class NbaPlayoffMatchupsController < ApplicationController
     else
       # redirect to set winner page w/ error message
       showError(@nba_playoff_matchup.id, "Problem occurred while saving matchup")
+    end
+  end
+
+  # Updates the team and seed of the specified matchup in the next round, based on the winning team
+  # in the specified current matchup.
+  def updateNextRoundMatchupTeamAndSeed(nextRoundMatchup, currentMatchup)
+    if currentMatchup.position.odd?
+      nextRoundMatchup.nba_team1_id = currentMatchup.winning_nba_team_id
+      nextRoundMatchup.team1_seed = currentMatchup.getWinningSeed
+    else
+      nextRoundMatchup.nba_team2_id = currentMatchup.winning_nba_team_id
+      nextRoundMatchup.team2_seed = currentMatchup.getWinningSeed
     end
   end
 

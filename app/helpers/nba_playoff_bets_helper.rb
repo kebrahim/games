@@ -4,13 +4,21 @@ module NbaPlayoffBetsHelper
   def matchupAtPosition(round, position, title)
     matchup = NbaPlayoffMatchup.where(year: @currentYear, round: round, position: position)
                                .first
-    
-    if matchup.nil?
-      matchupRow = "<strong>" + title + "</strong><br/>"
-    else
-      matchupRow = "<strong>" + title + "</strong><br/>" + 
-          matchup.team1_seed.to_s + ". " + matchup.nba_team1.city + "<br/>" +
-          matchup.team2_seed.to_s + ". " + matchup.nba_team2.city
+
+    matchupRow = "<strong>" + title + "</strong><br/>"
+
+    if !matchup.nil?
+      if !matchup.nba_team1.nil?
+        matchupRow += matchup.team1_seed.to_s + ". " + matchup.nba_team1.city
+      else
+        matchupRow += "--"
+      end
+      matchupRow += "<br/>"
+      if !matchup.nba_team2.nil?
+        matchupRow += matchup.team2_seed.to_s + ". " + matchup.nba_team2.city
+      else
+        matchupRow += "--"
+      end
     end
     return matchupRow.html_safe
   end
@@ -19,7 +27,7 @@ module NbaPlayoffBetsHelper
   def winnerAtMatchupPosition(round, position, title)
     matchup = NbaPlayoffMatchup.where(year: @currentYear, round: round, position: position)
                                .first
-    if matchup.nil?
+    if matchup.nil? || matchup.winning_nba_team.nil?
       matchupRow = "<strong>" + title + "</strong><br/>"
     else
       matchupRow = "<strong>" + title + "</strong><br/>" +

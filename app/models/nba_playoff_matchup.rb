@@ -7,10 +7,6 @@ class NbaPlayoffMatchup < ActiveRecord::Base
   validates_presence_of :year
   validates_presence_of :position
   validates_presence_of :round
-  validates_presence_of :nba_team1_id
-  validates_presence_of :team1_seed
-  validates_presence_of :nba_team2_id
-  validates_presence_of :team2_seed
 
   # returns the seed of the winning team, or -1 if neither team IDs match.
   def getWinningSeed
