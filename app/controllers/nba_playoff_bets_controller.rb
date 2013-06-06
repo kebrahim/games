@@ -70,6 +70,11 @@ class NbaPlayoffBetsController < ApplicationController
     if !@current_user.nil?
       @user = User.find(params[:id])
       @currentYear = Date.today.year
+
+      @userToPoints = NbaPlayoffBet.sum(
+          :points, group: 'user_id',
+          conditions: 'year = ' + @currentYear.to_s + ' and user_id = ' + @user.id.to_s)
+
     else
       redirect_to root_url
     end

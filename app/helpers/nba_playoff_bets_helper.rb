@@ -1,26 +1,51 @@
 module NbaPlayoffBetsHelper
 
   # Returns the matchup in the specified round and position
-  def matchupAtPosition(round, position, title)
+  def matchupAtPosition(round, position, title, addColor=true)
     matchup = NbaPlayoffMatchup.where(year: @currentYear, round: round, position: position)
                                .first
 
     matchupRow = "<strong>" + title + "</strong><br/>"
 
     if !matchup.nil?
-      if !matchup.nba_team1.nil?
-        matchupRow += matchup.team1_seed.to_s + ". " + matchup.nba_team1.city
-      else
-        matchupRow += "--"
-      end
-      matchupRow += "<br/>"
-      if !matchup.nba_team2.nil?
-        matchupRow += matchup.team2_seed.to_s + ". " + matchup.nba_team2.city
-      else
-        matchupRow += "--"
-      end
+      matchupRow += matchupTeam(matchup.nba_team1, matchup.team1_seed, matchup.winning_nba_team_id,
+          matchup.total_games, addColor)
+      matchupRow += matchupTeam(matchup.nba_team2, matchup.team2_seed, matchup.winning_nba_team_id,
+          matchup.total_games, addColor)
     end
     return matchupRow.html_safe
+  end
+
+  def matchupTeam(nba_team, seed, winning_nba_team_id, total_games, addColor)
+    matchupTeam = "<p class='matchup"
+    if !nba_team.nil?
+      isWinner = (nba_team.id == winning_nba_team_id)
+      if isWinner && addColor
+        matchupTeam += " green"
+      end
+      matchupTeam += "'>" + seed.to_s + ". " + nba_team.city
+      if addColor
+        matchupTeam += getGamesSuffix(nba_team, winning_nba_team_id, total_games)
+      end
+    else
+      matchupTeam += "--"
+    end
+    matchupTeam += "</p>"
+    return matchupTeam
+  end
+
+  def getGamesSuffix(nba_team, winning_nba_team_id, total_games)
+    gamesSuffix = ""
+    if !winning_nba_team_id.nil?
+      gamesSuffix += " ("
+      if nba_team.id == winning_nba_team_id
+        gamesSuffix += "4"
+      else
+        gamesSuffix += (total_games - 4).to_s
+      end
+      gamesSuffix += ")"
+    end
+    return gamesSuffix
   end
 
   # Returns the winner of the matchup at the specified position
@@ -112,16 +137,29 @@ module NbaPlayoffBetsHelper
                                         year: @currentYear,
                                         round: round,
                                         position: position).first
-    
+    betString = ""
     if !betForMatchup.nil?
-      # TODO matchup will be used to mark whether user was correct
       matchup = NbaPlayoffMatchup.where(year: @currentYear, round: round, position: position)
                                  .first
-      return (betForMatchup.expected_nba_team.abbreviation + " in " + 
-          betForMatchup.expected_total_games.to_s).html_safe
-    else      
-      # no bet yet; show nothing
-      return ""
+      betString = "<p class='matchup"
+      if !matchup.nil? && matchup.hasWinner
+        if betForMatchup.expected_nba_team_id == matchup.winning_nba_team_id
+          if betForMatchup.expected_total_games == matchup.total_games
+            betString += " green"
+          else
+            betString += " blue"
+          end
+        else
+          betString += " red"
+        end
+      end
+      betString += "'>" + betForMatchup.expected_nba_team.abbreviation + " in " + 
+          betForMatchup.expected_total_games.to_s
+      if !matchup.nil? && matchup.hasWinner
+        betString += " (" + betForMatchup.points.to_s + ")"
+      end
+      betString += "</p>"
     end
+    return betString.html_safe
   end
 end

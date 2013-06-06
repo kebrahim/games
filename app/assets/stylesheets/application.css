@@ -160,10 +160,31 @@ label {
 }
 
 .tourney {
-  font-size: 12px;
+  font-size: 11px;
   padding: 0 0 0 !important;
 }
 
 .tourney strong {
   font-size: 80%;
+}
+.green {
+  color: green;
+  font-weight: bold;
+}
+.blue {
+  color: blue;
+  font-weight: bold;
+}
+.red {
+  color: red;
+  font-weight: bold;
+}
+p.matchup {
+  margin: 0 0 0 0;
+  font-size: 11px;
+}
+td > a, td > a#hover {
+  color: black !important;
+  background-color: white !important;
+  text-decoration: underline !important;
 }
