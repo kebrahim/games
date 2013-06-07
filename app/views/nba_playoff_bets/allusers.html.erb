@@ -20,18 +20,26 @@
       <thead><tr>
         <th>Name</th>
         <th>Finals Pick</th>
+        <th>1st Rd</th>
+        <th>2nd Rd</th>
+        <th>3rd Rd</th>
+        <th>Finals</th>
         <th>Total Points</th>
       </tr></thead>
-      <% @usersToPoints.keys.each do |userId| %>
+      <% @usersToTotalPoints.keys.each do |userId| %>
         <tr>
           <td><%= link_to(@userMap[userId].fullName, "/nba_playoff_bets/" + userId.to_s) %></td>
           <% if !@finalsPicksMap[userId].nil? %>
-          <td><%= @finalsPicksMap[userId].expected_nba_team.city + " in " + 
+          <td><%= @finalsPicksMap[userId].expected_nba_team.abbreviation + " in " + 
                   @finalsPicksMap[userId].expected_total_games.to_s %></td>
           <% else %>
           <td>--</td>
           <% end %>
-          <td><%= @usersToPoints[userId] %></td>
+          <td><%= @usersToRound1Points[userId] %></td>
+          <td><%= @usersToRound2Points[userId] %></td>
+          <td><%= @usersToRound3Points[userId] %></td>
+          <td><%= @usersToRound4Points[userId] %></td>
+          <td style='font-weight:bold !important;'><%= @usersToTotalPoints[userId] %></td>
         </tr>
       <% end %>
     </table>

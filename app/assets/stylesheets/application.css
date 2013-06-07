@@ -185,6 +185,6 @@ p.matchup {
 }
 td > a, td > a#hover {
   color: black !important;
-  background-color: white !important;
+  background-color: transparent !important;
   text-decoration: underline !important;
 }

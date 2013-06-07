@@ -27,16 +27,33 @@ class NbaPlayoffBetsController < ApplicationController
       @betsEditable = false
 
       # Get all users which have made NBA Playoff picks, ordered by score DESC
-      @usersToPoints = NbaPlayoffBet.sum(:points,
-                                         group: 'user_id',
-                                         conditions: 'year = ' + @currentYear.to_s,
-                                         order: 'sum(points) DESC')
+      @usersToTotalPoints = getUserToPointsMap(@currentYear, nil)
+
+      # Show point breakdown by round
+      @usersToRound1Points = getUserToPointsMap(@currentYear, 1)
+      @usersToRound2Points = getUserToPointsMap(@currentYear, 2)
+      @usersToRound3Points = getUserToPointsMap(@currentYear, 3)
+      @usersToRound4Points = getUserToPointsMap(@currentYear, 4)
+
       @userMap = buildUserMap(@currentYear)
       @finalsPicksMap = buildFinalsPicksMap(@currentYear)
       @scoreMap = NbaPlayoffScore.order(:round)
     else
       redirect_to root_url
     end
+  end
+
+  # Returns a map of user id to total points in the specified year & round; if round is nil, then
+  # the points include all rounds in the specified year
+  def getUserToPointsMap(year, round)
+    condition = 'year = ' + year.to_s
+    if !round.nil?
+      condition += ' and round = ' + round.to_s
+    end
+    return NbaPlayoffBet.sum(:points,
+        group: 'user_id',
+        conditions: condition,
+        order: 'sum(points) DESC')
   end
 
   # Returns a map of user id to NBA Playoff user
