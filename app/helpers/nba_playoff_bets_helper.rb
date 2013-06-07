@@ -28,7 +28,7 @@ module NbaPlayoffBetsHelper
         matchupTeam += getGamesSuffix(nba_team, winning_nba_team_id, total_games)
       end
     else
-      matchupTeam += "--"
+      matchupTeam += "'>--"
     end
     matchupTeam += "</p>"
     return matchupTeam
@@ -156,7 +156,7 @@ module NbaPlayoffBetsHelper
       betString += "'>" + betForMatchup.expected_nba_team.abbreviation + " in " + 
           betForMatchup.expected_total_games.to_s
       if !matchup.nil? && matchup.hasWinner
-        betString += " (" + betForMatchup.points.to_s + ")"
+        betString += " (" + (betForMatchup.points.nil? ? "0" : betForMatchup.points.to_s) + ")"
       end
       betString += "</p>"
     end
