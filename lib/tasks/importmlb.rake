@@ -35,4 +35,30 @@ namespace :importmlb do
     end
     puts "Imported " + wincount.to_s + " MLB lines for " + year.to_s + "!"
   end
+
+  desc "Imports MLB over/under bet data from CSV file"
+  task :overunderbets => :environment do
+    require 'csv'
+    betcount = 0
+    year = Date.today.year
+    CSV.foreach(File.join(File.expand_path(::Rails.root), "/lib/assets/mlb_win_bets.csv")) do |row|
+      email = row[0]
+      team_abbreviation = row[1]
+      prediction = row[2]
+      amount = row[3].to_i
+
+      user = User.where(email: email).first
+      team = MlbTeam.where(abbreviation: team_abbreviation).first
+      if !team.nil?
+        win = MlbWin.where(year: year, mlb_team_id: team.id).first
+        if !win.nil? && !user.nil?
+          bet = MlbWinBet.create(prediction: prediction, amount: amount)
+          bet.update_attribute(:user_id, user.id)
+          bet.update_attribute(:mlb_win_id, win.id)
+          betcount += 1
+        end
+      end
+    end
+    puts "Imported " + betcount.to_s + " MLB over/under bets for " + year.to_s + "!"
+  end
 end
