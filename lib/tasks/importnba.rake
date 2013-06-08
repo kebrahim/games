@@ -18,6 +18,22 @@ namespace :importnba do
     puts "Imported " + teamcount.to_s + " NBA teams!"
   end
 
+  desc "Imports NBA scoring system data from CSV file"
+  task :playoff_scores => :environment do
+    require 'csv'
+    scorect = 0
+    CSV.foreach(File.join(
+      File.expand_path(::Rails.root), "/lib/assets/nba_playoff_scoring.csv")) do |row|
+      name = row[0]
+      points = row[1].to_i
+      round = row[2].to_i
+      
+      NbaPlayoffScore.create(name: name, points: points, round: round)
+      scorect += 1
+    end
+    puts "Imported " + scorect.to_s + " NBA scoring system rows!"
+  end
+
   desc "Imports NBA playoff matchup data from CSV file"
   task :playoff_matchups => :environment do
     require 'csv'
