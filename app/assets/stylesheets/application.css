@@ -71,6 +71,9 @@ table th {background-color: black; color:white;}
 .tdselect select {
 	margin-bottom: 0px;
 }
+.table-striped .my-team-row td {
+  background-color:yellow !important;
+}
 
 /* Labels */
 label {

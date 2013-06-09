@@ -27,7 +27,7 @@
         <th>Total Points</th>
       </tr></thead>
       <% @usersToTotalPoints.keys.each do |userId| %>
-        <tr>
+        <%= (@user.id == userId) ? "<tr class='my-team-row'>".html_safe : "<tr>".html_safe %>
           <td><%= link_to(@userMap[userId].fullName, "/nba_playoff_bets/" + userId.to_s) %></td>
           <% if !@finalsPicksMap[userId].nil? %>
           <td><%= @finalsPicksMap[userId].expected_nba_team.abbreviation + " in " + 

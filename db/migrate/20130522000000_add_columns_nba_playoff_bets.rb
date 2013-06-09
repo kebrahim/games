@@ -9,7 +9,7 @@ class AddColumnsNbaPlayoffBets < ActiveRecord::Migration
   end
 
   def self.down
-    remove_index :nba_playoff_bets, {:name => "nba_playoff_bets_year_round_position_user"}
+    remove_index :nba_playoff_bets, {:name => "nba_playoff_bets_year_round_position"}
     remove_column :nba_playoff_bets, :round
     remove_column :nba_playoff_bets, :position
     add_column :nba_playoff_bets, :nba_playoff_matchup_id
