@@ -33,4 +33,9 @@ class User < ActiveRecord::Base
   def fullName
     return first_name + " " + last_name
   end
+
+  # Overrides find_by_email to provide case-insensitive search, useful for logging in.
+  def self.find_by_email(email)
+    User.find(:all, :conditions => ["lower(email) = lower(?)", email]) 
+  end
 end
