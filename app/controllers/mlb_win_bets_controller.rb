@@ -111,8 +111,11 @@ class MlbWinBetsController < ApplicationController
       # TODO user can only change bets during certain window
       @betsEditable = false
 
-      # TODO show expected winning bets, based on current standings    
-      # TODO pull data from mlb.com?
+      # show expected winning bets, based on current standings    
+      # TODO cache standings in db
+      standingsHash = JSON.parse(Curl.get("https://erikberg.com/mlb/standings.json").body_str)
+      @standingsDate = DateTime.strptime(standingsHash["standings_date"]).strftime("%m/%d/%y")
+      @teamToStandingsMap = buildTeamToStandingsMap(standingsHash["standing"])
 
       # show all bets for all users
       # TODO collapse-all tables; allow user to expand
@@ -127,6 +130,18 @@ class MlbWinBetsController < ApplicationController
     else
       redirect_to root_url
     end
+  end
+
+  # Build map of mlb team id to win/loss record
+  def buildTeamToStandingsMap(standings)
+    teamToStandingsMap = {}
+    standings.each do |standing|
+      team = MlbTeam.find_by_name(standing["last_name"])
+      if !team.nil?
+        teamToStandingsMap[team.id] = standing["won"].to_s + "-" + standing["lost"].to_s
+      end
+    end
+    return teamToStandingsMap
   end
 
   # GET /mlb_win_bets/1

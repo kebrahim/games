@@ -41,12 +41,13 @@
     <% else %>
       <!-- MLB Standings -->
       <h4>MLB Standings</h4>
-      <%= division_standings_table("NL", "East", @currentYear) %>
-      <%= division_standings_table("NL", "Central", @currentYear) %>
-      <%= division_standings_table("NL", "West", @currentYear) %>
-      <%= division_standings_table("AL", "East", @currentYear) %>
-      <%= division_standings_table("AL", "Central", @currentYear) %>
-      <%= division_standings_table("AL", "West", @currentYear) %>
+      <p>Updated on (<%= @standingsDate %>)</p>
+      <%= division_standings_table("NL", "East", @currentYear, @teamToStandingsMap) %>
+      <%= division_standings_table("NL", "Central", @currentYear, @teamToStandingsMap) %>
+      <%= division_standings_table("NL", "West", @currentYear, @teamToStandingsMap) %>
+      <%= division_standings_table("AL", "East", @currentYear, @teamToStandingsMap) %>
+      <%= division_standings_table("AL", "Central", @currentYear, @teamToStandingsMap) %>
+      <%= division_standings_table("AL", "West", @currentYear, @teamToStandingsMap) %>
     <% end %>
   </div>
 

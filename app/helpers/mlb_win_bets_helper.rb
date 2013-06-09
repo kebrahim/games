@@ -3,7 +3,7 @@ module MlbWinBetsHelper
   
   TABLE_CLASS = 'table table-striped table-bordered table-condensed center'
   COL_NAMES = ['MLB Team', 'Line', 'Prediction', 'Bet Amount']
-  STANDINGS_COL_NAMES = ['MLB Team', 'Record', 'Predicted', 'Line', 'Result']
+  STANDINGS_COL_NAMES = ['MLB Team', 'Actual', 'On Pace', 'Line', 'Result']
     
   def division_table(mlb_wins, title)
     tags = []
@@ -99,7 +99,7 @@ module MlbWinBetsHelper
     return tablerow.html_safe
   end
 
-  def division_standings_table(league, division, year)
+  def division_standings_table(league, division, year, teamToStandingsMap)
     tags = []
     mlb_wins = 
         MlbWin.joins(:mlb_team)
@@ -114,18 +114,17 @@ module MlbWinBetsHelper
               STANDINGS_COL_NAMES.collect { |name| content_tag(:th, name)}.join.html_safe))
       tags << content_tag(:tbody) do
         mlb_wins.each do |mlb_win|
-          tags << team_standings_row(mlb_win).html_safe
+          tags << team_standings_row(mlb_win, teamToStandingsMap).html_safe
         end
       end #content_tag :tbody
       tags.join.html_safe     
     end #content_tag :table
   end
   
-  def team_standings_row(mlb_win)
-    # TODO get current record from MLB
-    # JSON.parse(Curl.get("https://erikberg.com/mlb/standings.json").body_str)
-    wins = 0
-    losses = 0
+  def team_standings_row(mlb_win, teamToStandingsMap)
+    winLoss = teamToStandingsMap[mlb_win.mlb_team_id]
+    wins = winLoss.split("-").first.to_i
+    losses = winLoss.split("-").last.to_i
     games = wins + losses
     if games > 0
       pred_wins = ((wins / games.to_f) * 162).round
@@ -145,7 +144,7 @@ module MlbWinBetsHelper
     tablerow =
        "<tr>
           <td>" + mlb_win.mlb_team.abbreviation + "</td>
-          <td>" + wins.to_s + "-" + losses.to_s + "</td>
+          <td>" + winLoss + "</td>
           <td>" + pred_wins.to_s + "-" + pred_losses.to_s + "</td>
           <td>" + mlb_win.line.to_s + "</td>
           <td>" + result + "</td>
