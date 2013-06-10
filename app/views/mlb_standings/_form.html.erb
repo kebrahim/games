@@ -1,0 +1,33 @@
+<%= form_for(@mlb_standing) do |f| %>
+  <% if @mlb_standing.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@mlb_standing.errors.count, "error") %> prohibited this mlb_standing from being saved:</h2>
+
+      <ul>
+      <% @mlb_standing.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :year %><br />
+    <%= f.number_field :year %>
+  </div>
+  <div class="field">
+    <%= f.label :mlb_team %><br />
+    <%= f.text_field :mlb_team %>
+  </div>
+  <div class="field">
+    <%= f.label :wins %><br />
+    <%= f.number_field :wins %>
+  </div>
+  <div class="field">
+    <%= f.label :losses %><br />
+    <%= f.number_field :losses %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Year:</b>
+  <%= @mlb_standing.year %>
+</p>
+
+<p>
+  <b>Mlb team:</b>
+  <%= @mlb_standing.mlb_team %>
+</p>
+
+<p>
+  <b>Wins:</b>
+  <%= @mlb_standing.wins %>
+</p>
+
+<p>
+  <b>Losses:</b>
+  <%= @mlb_standing.losses %>
+</p>
+
+
+<%= link_to 'Edit', edit_mlb_standing_path(@mlb_standing) %> |
+<%= link_to 'Back', mlb_standings_path %>

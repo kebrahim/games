@@ -14,8 +14,6 @@ class CreateNbaPlayoffMatchups < ActiveRecord::Migration
       t.timestamps
     end
 
-    #add_index :nba_playoff_matchups, [:year, :nba_team1_id, :nba_team2_id], :unique => true
-    #add_index :nba_playoff_matchups, [:year, :round, :position], :unique => true
     add_index :nba_playoff_matchups, :nba_team1_id
     add_index :nba_playoff_matchups, :nba_team2_id
     add_index :nba_playoff_matchups, :winning_nba_team_id

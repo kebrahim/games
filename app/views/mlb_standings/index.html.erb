@@ -1,0 +1,29 @@
+<h1>Listing mlb_standings</h1>
+
+<table>
+  <tr>
+    <th>Year</th>
+    <th>Mlb team</th>
+    <th>Wins</th>
+    <th>Losses</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @mlb_standings.each do |mlb_standing| %>
+  <tr>
+    <td><%= mlb_standing.year %></td>
+    <td><%= mlb_standing.mlb_team %></td>
+    <td><%= mlb_standing.wins %></td>
+    <td><%= mlb_standing.losses %></td>
+    <td><%= link_to 'Show', mlb_standing %></td>
+    <td><%= link_to 'Edit', edit_mlb_standing_path(mlb_standing) %></td>
+    <td><%= link_to 'Destroy', mlb_standing, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Mlb standing', new_mlb_standing_path %>

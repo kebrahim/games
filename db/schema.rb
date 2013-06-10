@@ -11,7 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130601185913) do
+ActiveRecord::Schema.define(:version => 20130610333333) do
+
+  create_table "mlb_standings", :force => true do |t|
+    t.integer  "year"
+    t.integer  "mlb_team_id"
+    t.integer  "wins"
+    t.integer  "losses"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "mlb_standings", ["mlb_team_id"], :name => "index_mlb_standings_on_mlb_team_id"
+  add_index "mlb_standings", ["year", "mlb_team_id"], :name => "mlb_standings_year_team", :unique => true
 
   create_table "mlb_teams", :force => true do |t|
     t.string   "city"
@@ -79,6 +91,8 @@ ActiveRecord::Schema.define(:version => 20130601185913) do
   add_index "nba_playoff_matchups", ["nba_team1_id"], :name => "index_nba_playoff_matchups_on_nba_team1_id"
   add_index "nba_playoff_matchups", ["nba_team2_id"], :name => "index_nba_playoff_matchups_on_nba_team2_id"
   add_index "nba_playoff_matchups", ["winning_nba_team_id"], :name => "index_nba_playoff_matchups_on_winning_nba_team_id"
+  add_index "nba_playoff_matchups", ["year", "nba_team1_id", "nba_team2_id"], :name => "nba_playoff_matchups_year_teams", :unique => true
+  add_index "nba_playoff_matchups", ["year", "round", "position"], :name => "nba_playoff_matchups_year_round_position", :unique => true
 
   create_table "nba_playoff_scores", :force => true do |t|
     t.integer  "round"

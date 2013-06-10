@@ -1,4 +1,6 @@
 Games::Application.routes.draw do
+  resources :mlb_standings
+
   resources :nba_playoff_scores
 
   resources :nba_playoff_bets

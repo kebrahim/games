@@ -18,6 +18,29 @@ namespace :importmlb do
     puts "Imported " + teamcount.to_s + " MLB teams!"
   end
 
+  desc "Populates MLB standings data from MLB teams CSV file"
+  task :standings => :environment do
+    require 'csv'
+    teamcount = 0
+    year = Date.today.year
+
+    # Only populate data if it doesn't aleady exist.
+    if MlbStanding.where(year: year).count == 0
+      CSV.foreach(File.join(File.expand_path(::Rails.root), "/lib/assets/mlb_teams.csv")) do |row|
+        abbreviation = row[0]
+        team = MlbTeam.find_by_abbreviation(abbreviation)
+        if !team.nil?
+          standing = MlbStanding.create(year: year, wins: 0, losses: 0)
+          standing.update_attribute(:mlb_team_id, team.id)
+          teamcount += 1
+        end
+      end
+      puts "Created " + teamcount.to_s + " MLB standings records for " + year.to_s + "!"
+    else
+      puts "MLB Standings data for " + year.to_s + " already exists!"
+    end
+  end
+
   desc "Imports MLB over/under data from CSV file"
   task :wins => :environment do
     require 'csv'

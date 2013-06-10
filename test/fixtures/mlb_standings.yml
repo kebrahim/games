@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  year: 1
+  mlb_team: 
+  wins: 1
+  losses: 1
+
+two:
+  year: 1
+  mlb_team: 
+  wins: 1
+  losses: 1
