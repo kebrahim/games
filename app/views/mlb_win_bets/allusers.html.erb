@@ -71,18 +71,14 @@
           <thead>
             <tr>
               <th>MLB Team</th>
-              <th>Line</th>
               <th>Prediction</th>
+              <th>Line</th>
+              <th>On Pace</th>
               <th>Bet Amount</th>
             </tr>
           </thead>
       <% end %>
-            <tr>
-            	<td><%= bet.mlb_win.mlb_team.abbreviation %></td>
-            	<td><%= bet.mlb_win.line.to_s %></td>
-            	<td><%= bet.prediction %></td>
-            	<td><%= bet.amount.to_s %></td>
-            </tr>
+            <%= player_standings_row(bet, @teamToStandingsMap) %>
     <% end %>
         </table>
   </div>

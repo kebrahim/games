@@ -151,4 +151,37 @@ module MlbWinBetsHelper
         </tr>"
     return tablerow
   end
+
+  def player_standings_row(bet, teamToStandingsMap)
+    winLoss = teamToStandingsMap[bet.mlb_win.mlb_team_id]
+    wins = winLoss[0]
+    losses = winLoss[1]
+    games = wins + losses
+    if games > 0
+      pred_wins = ((wins / games.to_f) * 162).round
+      pred_losses = 162 - pred_wins
+    else
+      pred_wins = 0
+      pred_losses = 0
+    end
+    if pred_wins < bet.mlb_win.line
+      result = 'Under'
+    elsif pred_wins > bet.mlb_win.line
+      result = 'Over'      
+    else
+      result = 'Push'
+    end
+
+    playerrow =
+      "<tr>
+         <td>" + bet.mlb_win.mlb_team.abbreviation + "</td>
+         <td>" + bet.prediction + "</td>
+         <td>" + bet.mlb_win.line.to_s + "</td>
+         <td>" + pred_wins.to_s + "-" + pred_losses.to_s + " (" + result + ")</td>
+         <td class='"
+    playerrow += (result == bet.prediction) ? "green" : "red"
+    playerrow += "'>" + bet.amount.to_s + "</td>
+       </tr>"
+    return playerrow.html_safe
+  end
 end
