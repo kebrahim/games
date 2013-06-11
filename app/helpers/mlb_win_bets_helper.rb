@@ -3,7 +3,7 @@ module MlbWinBetsHelper
   
   TABLE_CLASS = 'table table-striped table-bordered table-condensed center'
   COL_NAMES = ['MLB Team', 'Line', 'Prediction', 'Bet Amount']
-  STANDINGS_COL_NAMES = ['MLB Team', 'Actual', 'On Pace', 'Line', 'Result']
+  STANDINGS_COL_NAMES = ['MLB Team', 'Line', 'Actual', 'On Pace', 'Result']
     
   def division_table(mlb_wins, title)
     tags = []
@@ -144,15 +144,24 @@ module MlbWinBetsHelper
     tablerow =
        "<tr>
           <td>" + mlb_win.mlb_team.abbreviation + "</td>
+          <td>" + mlb_win.line.to_s + "</td>
           <td>" + wins.to_s + "-" + losses.to_s + "</td>
           <td>" + pred_wins.to_s + "-" + pred_losses.to_s + "</td>
-          <td>" + mlb_win.line.to_s + "</td>
           <td>" + result + "</td>
         </tr>"
     return tablerow
   end
 
-  def player_standings_row(bet, teamToStandingsMap)
+  def user_standings_link(user)
+    standings_link =
+        "<button type='button' class='btn btn-link btn-link-black' data-toggle='collapse'
+                  data-target='#user-collapse" + user.id.to_s + "'>
+            <h5>" + user.fullName + "</h5>
+         </button>"
+    return standings_link.html_safe
+  end 
+
+  def user_standings_row(bet, teamToStandingsMap)
     winLoss = teamToStandingsMap[bet.mlb_win.mlb_team_id]
     wins = winLoss[0]
     losses = winLoss[1]

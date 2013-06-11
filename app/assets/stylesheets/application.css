@@ -191,3 +191,8 @@ td > a, td > a#hover {
   background-color: transparent !important;
   text-decoration: underline !important;
 }
+
+.btn-link-black {
+  color: black !important;
+  text-decoration: underline !important;
+}
