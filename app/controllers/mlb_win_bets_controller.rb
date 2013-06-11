@@ -112,10 +112,17 @@ class MlbWinBetsController < ApplicationController
       @betsEditable = false
 
       # show expected winning bets, based on current standings    
-      # TODO cache standings in db
-      standingsHash = JSON.parse(Curl.get("https://erikberg.com/mlb/standings.json").body_str)
-      @standingsDate = DateTime.strptime(standingsHash["standings_date"]).strftime("%m/%d/%y")
-      @teamToStandingsMap = buildTeamToStandingsMap(standingsHash["standing"])
+      lastStanding = MlbStanding.where(year: @currentYear).order(:updated_at).last
+      if !lastStanding.updated_at.today?
+        # if DB is not updated, pull standings data from internet
+        standingsHash = JSON.parse(Curl.get("https://erikberg.com/mlb/standings.json").body_str)
+        @teamToStandingsMap = populateStandingsInDB(standingsHash["standing"], @currentYear)
+        @standingsDate = DateTime.strptime(standingsHash["standings_date"]).strftime("%m/%d/%y")
+      else
+        # otherwise, pull standings data from DB
+        @teamToStandingsMap = buildTeamToStandingsMap(@currentYear)
+        @standingsDate = lastStanding.updated_at.strftime("%m/%d/%y")
+      end
 
       # show all bets for all users
       # TODO collapse-all tables; allow user to expand
@@ -132,14 +139,27 @@ class MlbWinBetsController < ApplicationController
     end
   end
 
-  # Build map of mlb team id to win/loss record
-  def buildTeamToStandingsMap(standings)
+  # Updates the MLB standing information in the database for the specified year, based on the
+  # specified JSON data, and returns a map of mlb team id to win/loss record.
+  def populateStandingsInDB(standingsJSON, year)
     teamToStandingsMap = {}
-    standings.each do |standing|
+    standingsJSON.each do |standing|
       team = MlbTeam.find_by_name(standing["last_name"])
       if !team.nil?
-        teamToStandingsMap[team.id] = standing["won"].to_s + "-" + standing["lost"].to_s
+        mlbStanding = MlbStanding.where({year: year, mlb_team_id: team.id}).first
+        mlbStanding.update_attributes({wins: standing["won"], losses: standing["lost"]})
+        teamToStandingsMap[mlbStanding.mlb_team_id] = [mlbStanding.wins, mlbStanding.losses]
       end
+    end
+    return teamToStandingsMap
+  end
+
+  # Build map of mlb team id to win/loss record from the database
+  def buildTeamToStandingsMap(year)
+    teamToStandingsMap = {}
+
+    MlbStanding.where(year: year).each do |mlbStanding|
+      teamToStandingsMap[mlbStanding.mlb_team_id] = [mlbStanding.wins, mlbStanding.losses]
     end
     return teamToStandingsMap
   end

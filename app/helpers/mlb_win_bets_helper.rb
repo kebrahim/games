@@ -122,9 +122,9 @@ module MlbWinBetsHelper
   end
   
   def team_standings_row(mlb_win, teamToStandingsMap)
-    winLoss = teamToStandingsMap[mlb_win.mlb_team_id]
-    wins = winLoss.split("-").first.to_i
-    losses = winLoss.split("-").last.to_i
+    winLoss = teamToStandingsMap.nil? ? [0,0] : teamToStandingsMap[mlb_win.mlb_team_id]
+    wins = winLoss[0]
+    losses = winLoss[1]
     games = wins + losses
     if games > 0
       pred_wins = ((wins / games.to_f) * 162).round
@@ -144,7 +144,7 @@ module MlbWinBetsHelper
     tablerow =
        "<tr>
           <td>" + mlb_win.mlb_team.abbreviation + "</td>
-          <td>" + winLoss + "</td>
+          <td>" + wins.to_s + "-" + losses.to_s + "</td>
           <td>" + pred_wins.to_s + "-" + pred_losses.to_s + "</td>
           <td>" + mlb_win.line.to_s + "</td>
           <td>" + result + "</td>
