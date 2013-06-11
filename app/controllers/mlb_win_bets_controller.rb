@@ -113,7 +113,7 @@ class MlbWinBetsController < ApplicationController
 
       # show expected winning bets, based on current standings    
       lastStanding = MlbStanding.where(year: @currentYear).order(:updated_at).last
-      if !lastStanding.updated_at.today?
+      if !lastStanding.updated_at.today? || (lastStanding.wins == 0 && lastStanding.losses == 0)
         # if DB is not updated, pull standings data from internet
         standingsHash = JSON.parse(Curl.get("https://erikberg.com/mlb/standings.json").body_str)
         @teamToStandingsMap = populateStandingsInDB(standingsHash["standing"], @currentYear)
