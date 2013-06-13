@@ -51,15 +51,19 @@
     <% end %>
   </div>
 
-  <div class='span7 center'>
+  <div class='span7 center standings'>
     <% last_user_id = -1 %>
     <% first_user = true %>
     
     <!-- TODO Only show teams picks after season starts; before that just show user name -->
     <h4>Over/Under Standings</h4>
-    <button type='button' class='btn btn-link' data-toggle='collapse' data-target='.user-collapse'>
-      <p>(toggle all)</p>
-    </button><br/>
+    <button id='expandBtn' type='button' class='btn btn-link'>
+      <p>(expand all)</p>
+    </button>
+    <button id='collapseBtn' type='button' class='btn btn-link'>
+      <p>(collapse all)</p>
+    </button>
+    <br/>
 
     <% 
       rank = 0
@@ -76,7 +80,8 @@
       %>
       <%= user_standings_link(user_data[0], rank, user_data[1]) %>
       <%= "<div id='user-collapse".html_safe + user_data[0].to_s + 
-          "' class='collapse out user-collapse'>".html_safe %>
+          "' class='collapse user-collapse " +
+             (@user.id == user_data[0] ? "in" : "out") + "'>".html_safe %>
       <table class='table table-striped table-bordered table-condensed center'>
         <thead><tr>
           <th>MLB Team</th>
@@ -95,3 +100,13 @@
     <br/>
   </div>
 </div>
+
+<script>
+$('#expandBtn').click(function(){ 
+    $('.user-collapse.out').collapse('show')
+    $('.user-collapse').not('in').collapse('show')
+});
+$('#collapseBtn').click(function(){ 
+    $('.user-collapse.in').collapse('hide')
+});
+</script>
