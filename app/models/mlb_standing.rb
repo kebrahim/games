@@ -24,4 +24,16 @@ class MlbStanding < ActiveRecord::Base
       return "Push"
     end
   end
+
+  # returns the projected offset between the specified line and the projected wins
+  def projected_offset(line)
+    proj_result = self.projected_result(line)
+    if proj_result == "Over"
+      return "+" + (self.projected_wins - line).to_s
+    elsif proj_result == "Under"
+      return "-" + (line - self.projected_wins).to_s
+    else
+      return ""
+    end
+  end
 end

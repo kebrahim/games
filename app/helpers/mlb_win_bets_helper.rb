@@ -130,7 +130,8 @@ module MlbWinBetsHelper
           <td>" + mlb_win.line.to_s + "</td>
           <td>" + standing.wins.to_s + "-" + standing.losses.to_s + "</td>
           <td>" + standing.projected_wins.to_s + "-" + standing.projected_losses.to_s + "</td>
-          <td>" + standing.projected_result(mlb_win.line) + "</td>
+          <td>" + standing.projected_result(mlb_win.line) + " " + 
+                  standing.projected_offset(mlb_win.line) + "</td>
         </tr>"
     return tablerow
   end
@@ -148,13 +149,14 @@ module MlbWinBetsHelper
   def user_standings_row(bet, teamToStandingsMap)
     standing = teamToStandingsMap[bet.mlb_win.mlb_team_id]
     projected_result = standing.projected_result(bet.mlb_win.line)
+    projected_offset = standing.projected_offset(bet.mlb_win.line)
     playerrow =
       "<tr>
          <td>" + bet.mlb_win.mlb_team.abbreviation + "</td>
          <td>" + bet.prediction + "</td>
          <td>" + bet.mlb_win.line.to_s + "</td>
-         <td>" + standing.projected_wins.to_s + "-" + standing.projected_losses.to_s + " (" + 
-                 projected_result + ")</td>
+         <td>" + standing.projected_wins.to_s + "-" + standing.projected_losses.to_s + "</td>
+         <td>" + projected_result + " " + projected_offset + "</td>
          <td class='"
     playerrow += (projected_result == bet.prediction) ? "green" : "red"
     playerrow += "'>" + bet.amount.to_s + "</td>
