@@ -122,73 +122,41 @@ module MlbWinBetsHelper
   end
   
   def team_standings_row(mlb_win, teamToStandingsMap)
-    winLoss = teamToStandingsMap.nil? ? [0,0] : teamToStandingsMap[mlb_win.mlb_team_id]
-    wins = winLoss[0]
-    losses = winLoss[1]
-    games = wins + losses
-    if games > 0
-      pred_wins = ((wins / games.to_f) * 162).round
-      pred_losses = 162 - pred_wins
-    else
-      pred_wins = 0
-      pred_losses = 0
-    end
-    if pred_wins < mlb_win.line
-      result = 'Under'
-    elsif pred_wins > mlb_win.line
-      result = 'Over'      
-    else
-      result = 'Push'
-    end
+    standing = teamToStandingsMap[mlb_win.mlb_team_id]
       
     tablerow =
        "<tr>
           <td>" + mlb_win.mlb_team.abbreviation + "</td>
           <td>" + mlb_win.line.to_s + "</td>
-          <td>" + wins.to_s + "-" + losses.to_s + "</td>
-          <td>" + pred_wins.to_s + "-" + pred_losses.to_s + "</td>
-          <td>" + result + "</td>
+          <td>" + standing.wins.to_s + "-" + standing.losses.to_s + "</td>
+          <td>" + standing.projected_wins.to_s + "-" + standing.projected_losses.to_s + "</td>
+          <td>" + standing.projected_result(mlb_win.line) + "</td>
         </tr>"
     return tablerow
   end
 
-  def user_standings_link(user)
+  def user_standings_link(user_id, rank, user_data)
     standings_link =
         "<button type='button' class='btn btn-link btn-link-black' data-toggle='collapse'
-                  data-target='#user-collapse" + user.id.to_s + "'>
-            <h5>" + user.fullName + "</h5>
+                  data-target='#user-collapse" + user_id.to_s + "'>
+            <h5>" + rank.to_s + ". " + user_data["user"].fullName + " (" +
+                    user_data["points"].to_s + ")</h5>
          </button>"
     return standings_link.html_safe
   end 
 
   def user_standings_row(bet, teamToStandingsMap)
-    winLoss = teamToStandingsMap[bet.mlb_win.mlb_team_id]
-    wins = winLoss[0]
-    losses = winLoss[1]
-    games = wins + losses
-    if games > 0
-      pred_wins = ((wins / games.to_f) * 162).round
-      pred_losses = 162 - pred_wins
-    else
-      pred_wins = 0
-      pred_losses = 0
-    end
-    if pred_wins < bet.mlb_win.line
-      result = 'Under'
-    elsif pred_wins > bet.mlb_win.line
-      result = 'Over'      
-    else
-      result = 'Push'
-    end
-
+    standing = teamToStandingsMap[bet.mlb_win.mlb_team_id]
+    projected_result = standing.projected_result(bet.mlb_win.line)
     playerrow =
       "<tr>
          <td>" + bet.mlb_win.mlb_team.abbreviation + "</td>
          <td>" + bet.prediction + "</td>
          <td>" + bet.mlb_win.line.to_s + "</td>
-         <td>" + pred_wins.to_s + "-" + pred_losses.to_s + " (" + result + ")</td>
+         <td>" + standing.projected_wins.to_s + "-" + standing.projected_losses.to_s + " (" + 
+                 projected_result + ")</td>
          <td class='"
-    playerrow += (result == bet.prediction) ? "green" : "red"
+    playerrow += (projected_result == bet.prediction) ? "green" : "red"
     playerrow += "'>" + bet.amount.to_s + "</td>
        </tr>"
     return playerrow.html_safe

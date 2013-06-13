@@ -125,11 +125,11 @@ class MlbWinBetsController < ApplicationController
       end
 
       # show all bets for all users
-      # TODO collapse-all tables; allow user to expand
       @allBets =
           MlbWinBet.joins(:mlb_win)
                    .where("mlb_wins.year = " + @currentYear.to_s)
                    .order(:user_id, "amount DESC")
+      @userToBetsMap = buildUserToBetsMap(@currentYear, @teamToStandingsMap)
 
       respond_to do |format|
         format.html # all.html.erb
@@ -139,27 +139,58 @@ class MlbWinBetsController < ApplicationController
     end
   end
 
+  # Creates and returns a hashmap of user-id to a second hashmap of user data, mapping "bets" to an
+  # array of all of their bets for the specified year, "points" to the total number of points they
+  # would score if the season ended today, and "user" to the actual user object.
+  def buildUserToBetsMap(year, teamToStandingsMap)
+    allBets = MlbWinBet.joins(:mlb_win)
+                       .where("mlb_wins.year = " + year.to_s)
+                       .order(:user_id, "amount DESC")
+    userToBets = {}
+    allBets.each do |bet|
+      if !userToBets.has_key?(bet.user.id)
+        # hash doesn't have user yet; initialize user data hash
+        userData = {}
+        userData["bets"] = [bet]
+        userData["points"] = 0
+        userData["user"] = bet.user
+        userToBets[bet.user.id] = userData
+      else
+        # add bet to user data hash
+        userToBets[bet.user.id]["bets"] << bet
+      end
+
+      # Update points if bet is correct, based on projection of current standings
+      mlb_standing = teamToStandingsMap[bet.mlb_win.mlb_team_id]
+      if mlb_standing.projected_result(bet.mlb_win.line) == bet.prediction
+        userToBets[bet.user.id]["points"] += bet.amount
+      end
+    end
+    return userToBets
+  end
+
   # Updates the MLB standing information in the database for the specified year, based on the
-  # specified JSON data, and returns a map of mlb team id to win/loss record.
+  # specified JSON data, and returns a map of mlb team id to MLB standing for specified year.
   def populateStandingsInDB(standingsJSON, year)
     teamToStandingsMap = {}
     standingsJSON.each do |standing|
+      # TODO pull all teams from MlbTeam, build map of team_name to team_id
       team = MlbTeam.find_by_name(standing["last_name"])
       if !team.nil?
         mlbStanding = MlbStanding.where({year: year, mlb_team_id: team.id}).first
         mlbStanding.update_attributes({wins: standing["won"], losses: standing["lost"]})
-        teamToStandingsMap[mlbStanding.mlb_team_id] = [mlbStanding.wins, mlbStanding.losses]
+        teamToStandingsMap[mlbStanding.mlb_team_id] = mlbStanding
       end
     end
     return teamToStandingsMap
   end
 
-  # Build map of mlb team id to win/loss record from the database
+  # Build map of mlb team id to MLB standing from the database
   def buildTeamToStandingsMap(year)
     teamToStandingsMap = {}
 
     MlbStanding.where(year: year).each do |mlbStanding|
-      teamToStandingsMap[mlbStanding.mlb_team_id] = [mlbStanding.wins, mlbStanding.losses]
+      teamToStandingsMap[mlbStanding.mlb_team_id] = mlbStanding
     end
     return teamToStandingsMap
   end
