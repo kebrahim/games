@@ -42,12 +42,12 @@
       <!-- MLB Standings -->
       <h4>MLB Standings</h4>
       <p>Updated on (<%= @standingsDate %>)</p>
-      <%= division_standings_table("NL", "East", @currentYear, @teamToStandingsMap) %>
-      <%= division_standings_table("NL", "Central", @currentYear, @teamToStandingsMap) %>
-      <%= division_standings_table("NL", "West", @currentYear, @teamToStandingsMap) %>
-      <%= division_standings_table("AL", "East", @currentYear, @teamToStandingsMap) %>
-      <%= division_standings_table("AL", "Central", @currentYear, @teamToStandingsMap) %>
-      <%= division_standings_table("AL", "West", @currentYear, @teamToStandingsMap) %>
+      <%= team_standings_table("NL", "East", @divisionToStandingsMap, @teamToWinMap) %>
+      <%= team_standings_table("NL", "Central", @divisionToStandingsMap, @teamToWinMap) %>
+      <%= team_standings_table("NL", "West", @divisionToStandingsMap, @teamToWinMap) %>
+      <%= team_standings_table("AL", "East", @divisionToStandingsMap, @teamToWinMap) %>
+      <%= team_standings_table("AL", "Central", @divisionToStandingsMap, @teamToWinMap) %>
+      <%= team_standings_table("AL", "West", @divisionToStandingsMap, @teamToWinMap) %>
     <% end %>
   </div>
 
@@ -103,10 +103,17 @@
 
 <script>
 $('#expandBtn').click(function(){ 
-    $('.user-collapse.out').collapse('show')
-    $('.user-collapse').not('in').collapse('show')
+  for (var i = 0; i < $('.user-collapse').length; i++) {
+      if (!$($('.user-collapse')[i]).hasClass('in')) {
+          $($('.user-collapse')[i]).collapse('show')
+      }
+  }
 });
 $('#collapseBtn').click(function(){ 
-    $('.user-collapse.in').collapse('hide')
+  for (var i = 0; i < $('.user-collapse').length; i++) {
+      if ($($('.user-collapse')[i]).hasClass('in')) {
+          $($('.user-collapse')[i]).collapse('hide')
+      }
+  }
 });
 </script>

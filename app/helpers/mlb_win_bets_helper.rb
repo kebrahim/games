@@ -98,32 +98,27 @@ module MlbWinBetsHelper
           </tr>"
     return tablerow.html_safe
   end
-
-  def division_standings_table(league, division, year, teamToStandingsMap)
-    tags = []
-    mlb_wins = 
-        MlbWin.joins(:mlb_team)
-              .where(year: year)
-              .where("mlb_teams.league = '" + league +
-                     "' and mlb_teams.division = '" + division + "'")
-              .order("line DESC")
-    tags << content_tag(:h5, league + " " + division)
-    content_tag(:table, class: TABLE_CLASS) do
-      tags << content_tag(:thead,
-          content_tag(:tr,
-              STANDINGS_COL_NAMES.collect { |name| content_tag(:th, name)}.join.html_safe))
-      tags << content_tag(:tbody) do
-        mlb_wins.each do |mlb_win|
-          tags << team_standings_row(mlb_win, teamToStandingsMap).html_safe
-        end
-      end #content_tag :tbody
-      tags.join.html_safe     
-    end #content_tag :table
-  end
   
-  def team_standings_row(mlb_win, teamToStandingsMap)
-    standing = teamToStandingsMap[mlb_win.mlb_team_id]
-      
+  def team_standings_table(league, division, divisionToStandingsMap, teamToWinMap)
+    standings_table = "<h5>" + league + " " + division + "</h5>"
+    standings_table +=
+      "<table class='" + TABLE_CLASS + "'>
+         <thead><tr>
+           <th>MLB Team</th>
+           <th>Line</th>
+           <th>Actual</th>
+           <th>On Pace</th>
+           <th>Result</th>
+         </tr></thead>"
+    divisionToStandingsMap[league + division].sort \
+        {|a,b| a.projected_wins <=> b.projected_wins}.reverse.each do |standing|
+      standings_table << team_standings_row(teamToWinMap[standing.mlb_team_id], standing)
+    end
+    standings_table << "</table>"
+    return standings_table.html_safe
+  end
+
+  def team_standings_row(mlb_win, standing)      
     tablerow =
        "<tr>
           <td>" + mlb_win.mlb_team.abbreviation + "</td>

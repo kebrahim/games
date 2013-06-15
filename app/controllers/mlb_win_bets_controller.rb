@@ -124,9 +124,12 @@ class MlbWinBetsController < ApplicationController
         @standingsDate = lastStanding.updated_at.strftime("%m/%d/%y")
       end
 
+      @divisionToStandingsMap = buildDivisionToStandingsMap(@teamToStandingsMap)
+      @teamToWinMap = buildTeamToWinMap(@currentYear)
+
       # show all bets for all users
       @allBets =
-          MlbWinBet.joins(:mlb_win)
+          MlbWinBet.joins(:mlb_win).joins(:mlb_team)
                    .where("mlb_wins.year = " + @currentYear.to_s)
                    .order(:user_id, "amount DESC")
       @userToBetsMap = buildUserToBetsMap(@currentYear, @teamToStandingsMap)
@@ -137,6 +140,30 @@ class MlbWinBetsController < ApplicationController
     else
       redirect_to root_url
     end
+  end
+
+  # builds a map from mlb league/division to an array of MLB standings within that division
+  def buildDivisionToStandingsMap(teamToStandingsMap)
+    divisionToStandingsMap = {}
+    teamToStandingsMap.keys.each do |team_id|
+      standing = teamToStandingsMap[team_id]
+      team = standing.mlb_team
+      if !divisionToStandingsMap.has_key?(team.league + team.division)
+        divisionToStandingsMap[team.league + team.division] = [standing]
+      else
+        divisionToStandingsMap[team.league + team.division] << standing
+      end
+    end
+    return divisionToStandingsMap
+  end
+
+  # returns a map of mlb team id to the o/u line for the specified year
+  def buildTeamToWinMap(year)
+    teamToWinMap = {}
+    MlbWin.where(year: year).each do |win|
+      teamToWinMap[win.mlb_team_id] = win
+    end
+    return teamToWinMap
   end
 
   # Creates and returns a hashmap of user-id to a second hashmap of user data, mapping "bets" to an
@@ -173,16 +200,24 @@ class MlbWinBetsController < ApplicationController
   # specified JSON data, and returns a map of mlb team id to MLB standing for specified year.
   def populateStandingsInDB(standingsJSON, year)
     teamToStandingsMap = {}
+    teamNameToStandingMap = buildMlbTeamNameToStandingMap(year)
     standingsJSON.each do |standing|
-      # TODO pull all teams from MlbTeam, build map of team_name to team_id
-      team = MlbTeam.find_by_name(standing["last_name"])
-      if !team.nil?
-        mlbStanding = MlbStanding.where({year: year, mlb_team_id: team.id}).first
+      mlbStanding = teamNameToStandingMap[standing["last_name"]]
+      if !mlbStanding.nil?
         mlbStanding.update_attributes({wins: standing["won"], losses: standing["lost"]})
         teamToStandingsMap[mlbStanding.mlb_team_id] = mlbStanding
       end
     end
     return teamToStandingsMap
+  end
+
+  # Returns a map of MLB team name to the entire team
+  def buildMlbTeamNameToStandingMap(year)
+    teamNameToStandingMap = {}
+    MlbStanding.includes(:mlb_team).where(year: year).each do |mlb_standing|
+      teamNameToStandingMap[mlb_standing.mlb_team.name] = mlb_standing
+    end
+    return teamNameToStandingMap
   end
 
   # Build map of mlb team id to MLB standing from the database
